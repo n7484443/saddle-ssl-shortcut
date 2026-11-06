@@ -1,0 +1,240 @@
+{
+  "id": "fresh_extent_deep_SimCLR",
+  "family": "extent",
+  "network": "deep",
+  "notebook": "iclr2026/iclr/feature_preference/theoretical/extent_bias.ipynb",
+  "config_path": "iclr2026/iclr/feature_preference/theoretical/deep/config.yaml",
+  "source_sha256": "8258251b9be93b088d105f4e5342f9f3dba71f5f31f4a56970852389953f577c",
+  "config_sha256": "610ff08a5fa61c5e7339463c0e011c862a5c48ccdc1fcaa7bde8f8605843b061",
+  "config": {
+    "network": "deep",
+    "sizes": [
+      6,
+      2
+    ],
+    "batch": 1000,
+    "layer": 4,
+    "mid_layer_size": 8,
+    "BarlowTwins_test": {
+      "balanced": false,
+      "aligned": false,
+      "lr": "1e-2",
+      "scaling": "2e-1",
+      "seed": 0,
+      "epochs": 6000,
+      "lambdas": [
+        "0"
+      ]
+    },
+    "BarlowTwins_ideal": {
+      "balanced": true,
+      "aligned": true,
+      "lr": "2e-2",
+      "scaling": "3e-2",
+      "seed": 0,
+      "epochs": 18000,
+      "lambdas": [
+        "0",
+        "0.1",
+        "0.5",
+        "1"
+      ]
+    },
+    "BarlowTwins_balanced": {
+      "balanced": false,
+      "aligned": true,
+      "lr": "2e-2",
+      "scaling": "3e-2",
+      "seed": 0,
+      "epochs": 18000,
+      "lambdas": [
+        "1"
+      ]
+    },
+    "BarlowTwins_batchnorm": {
+      "balanced": false,
+      "aligned": false,
+      "lr": "1e-3",
+      "scaling": "5e-4",
+      "seed": 0,
+      "epochs": 5000,
+      "lambdas": [
+        "1"
+      ]
+    },
+    "BarlowTwins": {
+      "balanced": false,
+      "aligned": false,
+      "lr": "5e-3",
+      "scaling": "6e-1",
+      "seed": 0,
+      "epochs": 5000,
+      "lambdas": [
+        "0",
+        "0.1",
+        "0.2",
+        "0.3",
+        "0.4",
+        "0.5",
+        "0.6",
+        "0.7",
+        "0.8",
+        "0.9",
+        "1"
+      ]
+    },
+    "SimCLR": {
+      "seed": 0,
+      "epochs": 1000,
+      "lr": "2e-6",
+      "scaling": "4e-9"
+    },
+    "VICReg": {
+      "seed": 0,
+      "epochs": 10000,
+      "lr": "9e-4",
+      "scaling": "3e-1"
+    }
+  },
+  "loss_type": "SimCLR",
+  "alpha": null,
+  "steps": 1000,
+  "batch_size": 1000,
+  "learning_rate": 2e-06,
+  "scaling": 4e-09,
+  "layer_weight_multiplier": 0.007952707287670507,
+  "activation": "none",
+  "widths": [
+    8,
+    8,
+    8,
+    8,
+    2
+  ],
+  "augmentation_noise_std": 0.01,
+  "effective_balanced": false,
+  "effective_aligned": false,
+  "loss_eigenvalue_steps": "pre-update 0..N-1",
+  "weight_diagnostic_steps": "initial plus post-update 0..N",
+  "nonlinear_diagnostic_caveat": "For MLP, FA/SA/get_total_weight use the product of Linear weights, not the actual nonlinear map.",
+  "slope": null,
+  "paper_figures": [
+    28,
+    33
+  ],
+  "batch_normalization": false,
+  "objective_parameters": {
+    "temperature": 0.5,
+    "use_batchnorm": false
+  },
+  "initialization_group": "deep_SimCLR_d8293f4734fb",
+  "gamma_provenance": "Original diagnostic/renderer Gamma was unseeded. Seed0 is a declared new deterministic choice; no historical RNG reconstruction is claimed.",
+  "previous_source_job_id": "extent_deep_SimCLR",
+  "fresh_training_required": true,
+  "gamma_seed": 0,
+  "objective_implementation": "iclr2026/iclr/common.py:SimCLRLoss",
+  "plotting_cells": {
+    "notebook": "neurips2026_submit/neurips/feature_preference/theoretical/deep/simclr_renderer.ipynb",
+    "zero_based_cells": [
+      13,
+      14
+    ],
+    "original_loss_type_key": "SimCLR"
+  },
+  "status": "completed",
+  "started_at_utc": "2026-11-05T04:17:25.101776+00:00",
+  "environment_sha256": "f09d56e6f0c6ba799db2489a2fdc0c88b2f8d0a4df89d2deb37ba20d29ebe5cd",
+  "adapter_sha256": "2a2e864cc049703fc2a1b448918cd13ca56694ea40e405aefd640d46b035aaad",
+  "gamma_rng_seed": 0,
+  "training_seed_reset_inside_original_function": 0,
+  "optimizer_loop_modified": false,
+  "adapter_changes": [
+    "omit notebook plot/library/load/save cells",
+    "explicit gamma preparation seed0",
+    "capture CPU model state before/after original epoch loop",
+    "disable progress rendering only",
+    "dispatch original objective coefficient and slope arguments",
+    "omit amplitude cell13 trailing post-training visualization only"
+  ],
+  "gamma_diagnostic_sha256": "19123b55ed8cd3b8b5a8f0c9e5bcf4e73aa407216b1090de550e2b3e3e78a767",
+  "executed_train_sha256": "b6c9a58dba5373791c440e4bb8c612f8cb4217876f921795ec99dbb27a31dd4b",
+  "observer_only_additions": [
+    "Gamma input pairs and feature vectors",
+    "CPU/CUDA/Python/NumPy RNG states before/after Gamma and epoch loop",
+    "self-contained renderer numeric inputs and effective settings"
+  ],
+  "initialization_diagnostics_sha256": "eaeb5799c0cb10b668adca939c5fef04b63eab654d7169c5e58e2806d051362e",
+  "seconds": 94.17689350014552,
+  "actual_loss_steps": 1000,
+  "finite_by_array": {
+    "w": true,
+    "u0": true,
+    "s0": true,
+    "v0": true,
+    "loss": true,
+    "eiglist": true,
+    "weight_singular": true,
+    "subspace_alignment": true,
+    "feature_weight_r_singular_alignment": true,
+    "feature_alignment": true
+  },
+  "final_weights_finite": true,
+  "lengths_match": true,
+  "initial_state_sha256": "3a07770d5d02937e8d0ccb4a666e3e81f1260015becb400cad830dcadce76445",
+  "loss_first": 7.595700740814209,
+  "loss_last": 6.467829704284668,
+  "eigenvalues_last": [
+    5.181314434988846e-17,
+    4.972985358122671e-17
+  ],
+  "trace_shapes": {
+    "w": [
+      2,
+      8
+    ],
+    "u0": [
+      2,
+      2
+    ],
+    "s0": [
+      2
+    ],
+    "v0": [
+      8,
+      8
+    ],
+    "loss": [
+      1000
+    ],
+    "eiglist": [
+      2,
+      1000
+    ],
+    "weight_singular": [
+      2,
+      1001
+    ],
+    "subspace_alignment": [
+      1001
+    ],
+    "feature_weight_r_singular_alignment": [
+      2,
+      2,
+      1001
+    ],
+    "feature_alignment": [
+      2,
+      1001
+    ]
+  },
+  "artifact_sha256": {
+    "traces.npz": "b607de32fbcda3fa42d95496d879d7abb7bbf01b527977200544df5f4cb87f2e",
+    "initial_weights.npz": "f0c15e29aeff0b14c5523d5e369ad8d31c3bcac13b2e77975dfd6e1afcc11286",
+    "final_weights.npz": "ad39ffae1e31997b53703ea9ff514c7bf95c07412442c5b1da4fee0c85ece3ae",
+    "rng_states.npz": "ae8b58178701af0edebfc7bbb9ee1af6c86b0d7b5205bc720336f1bc85c18d3d",
+    "gamma_sample_inputs.npz": "ec04d0e2dc345d7abd9974590f70c0a4df660e741ae0cb190d28947e0fc39b56",
+    "renderer_inputs.npz": "b697ee4cedf750c0376c5c21f2d4def05f8d02997f2263c415a4fb9f8fed2242",
+    "renderer_metadata.json": "366d404fe77338ed2364ae79ae6035f19ff4b29562416c64aff7ac134f6fc207"
+  },
+  "ended_at_utc": "2026-11-05T04:18:59.343695+00:00"
+}

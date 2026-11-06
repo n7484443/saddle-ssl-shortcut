@@ -1,0 +1,8 @@
+network: linear
+sizes: [40, 30, 20, 5, 3]
+batch: 600
+seed: 0
+epochs: 400
+lr: 7.5e-8
+scaling: 3.0e-4
+# No input_scale; complete unscaled views enter the encoder.

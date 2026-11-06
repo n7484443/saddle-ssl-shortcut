@@ -1,0 +1,64 @@
+network: "deep"
+
+sizes: [6, 2]
+
+batch: 1000
+layer: 4
+mid_layer_size: 8
+
+BarlowTwins_test:
+  balanced: False
+  aligned: False
+  lr: 1e-2
+  scaling: 2e-1
+  seed: 0
+  epochs: 6000
+  lambdas: ["0"]
+
+BarlowTwins_ideal:
+  balanced: True
+  aligned: True
+  lr: 2e-2
+  scaling: 3e-2
+  seed: 0
+  epochs: 18000
+  lambdas: ["0", "0.1", "0.5", "1"]
+
+BarlowTwins_balanced:
+  balanced: False
+  aligned: True
+  lr: 2e-2
+  scaling: 3e-2
+  seed: 0
+  epochs: 18000
+  lambdas: ["1"]
+
+BarlowTwins_batchnorm:
+  balanced: False
+  aligned: False
+  lr: 1e-3
+  scaling: 5e-4
+  seed: 0
+  epochs: 5000
+  lambdas: ["1"]
+
+BarlowTwins:
+  balanced: False
+  aligned: False
+  lr: 5e-3
+  scaling: 6e-1
+  seed: 0
+  epochs: 5000
+  lambdas: ["0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1"]
+
+SimCLR:
+  seed: 0
+  epochs: 1000
+  lr: 2e-6
+  scaling: 4e-9
+
+VICReg:
+  seed: 0
+  epochs: 10000
+  lr: 9e-4
+  scaling: 3e-1

@@ -1,0 +1,61 @@
+batch_size: 200
+network: ["ResNet-18", "Vit-B"]
+dataset: "Colored MNIST"
+dataset_directory: "cmnist"
+input_size: 42
+ratios: ["0.05", "0.1", "0.15"]
+weight_decay: 1e-6
+report_frequency: 150
+
+BarlowTwins:
+  seed: 0
+  lambdas:
+#    "0":
+#      "ResNet-18":
+#        lr: 1e-3
+#        scaling: 1e-3
+#        epochs: 1000
+#      "Vit-B":
+#        lr: 1e-3
+#        scaling: 1e-3
+#        epochs: 1000
+    "0.005":
+      "ResNet-18":
+        lr: 2e-5
+        scaling: 9e-2
+        epochs: 40
+      "Vit-B":
+        lr: 1e-5
+        scaling: 9e-2
+        epochs: 30
+    "1":
+      "ResNet-18":
+        lr: 4e-6
+        scaling: 9e-2
+        epochs: 30
+      "Vit-B":
+        lr: 4e-6
+        scaling: 9e-2
+        epochs: 30
+
+SimCLR:
+  seed: 0
+  "ResNet-18":
+    epochs: 60
+    lr: 1e-6
+    scaling: 9e-2
+    temperature: 0.5
+  "Vit-B":
+    epochs: 60
+    lr: 1e-6
+    scaling: 9e-2
+    temperature: 0.5
+VICReg:
+  "ResNet-18":
+    epochs: 60
+    lr: 4e-6
+    scaling: 9e-2
+  "Vit-B":
+    epochs: 60
+    lr: 4e-6
+    scaling: 9e-2

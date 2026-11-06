@@ -1,0 +1,17 @@
+batch_size: 32
+dataset: "RRC"
+weight_decay: 1e-6
+report_frequency: 5
+save_frequency: 1000
+learning_rate_decay: 1
+augmentation: True
+
+seed: 1
+lambdas: "0.05"
+
+crop_min: "0.7"
+
+method: "rrc_color_rough"
+lr: 5e-6
+scaling: 9e-2
+epochs: 100

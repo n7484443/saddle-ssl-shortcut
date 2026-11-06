@@ -1,0 +1,15 @@
+intensity: 1.0
+max_epoch: 100
+spuriosity: None
+test_epoch: [-1]
+subset_ratio: 0.2
+trigger_type: "hadamard"
+batch_size: 64
+max_step: -1
+test_step_freq: -1
+scaling: 1
+seed: 42
+lr: 1e-3
+
+loss: "SimCLR"
+temp: 0.01

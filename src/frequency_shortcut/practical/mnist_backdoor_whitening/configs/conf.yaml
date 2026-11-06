@@ -1,0 +1,14 @@
+intensity: 1.0
+max_epoch: 100
+spuriosity: None
+test_epoch: [-1]
+subset_ratio: 0.2
+trigger_type: "hadamard"
+batch_size: 64
+max_step: -1
+test_step_freq: -1
+scaling: 2.8e-3
+seed: 42
+
+whitening: true
+whitening_eps: 5e-1

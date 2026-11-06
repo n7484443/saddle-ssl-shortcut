@@ -1,0 +1,217 @@
+{
+  "id": "extent_mlp_SimCLR",
+  "family": "extent",
+  "network": "mlp",
+  "notebook": "iclr2026/iclr/feature_preference/theoretical/extent_bias.ipynb",
+  "config_path": "iclr2026/iclr/feature_preference/theoretical/mlp/config.yaml",
+  "source_sha256": "8258251b9be93b088d105f4e5342f9f3dba71f5f31f4a56970852389953f577c",
+  "config_sha256": "b4677fdf07d957d9245ab199f8ec271f16641308790986b31c2eb0b3f6d1172e",
+  "config": {
+    "network": "mlp",
+    "batch": 1000,
+    "layer": 4,
+    "mid_layer_size": 8,
+    "sizes": [
+      6,
+      2
+    ],
+    "BarlowTwins_test_relu": {
+      "lr": "3e-2",
+      "scaling": "6e-1",
+      "seed": 0,
+      "epochs": 6000,
+      "lambdas": [
+        "1"
+      ]
+    },
+    "BarlowTwins_test_leakyrelu": {
+      "lr": "1e-2",
+      "scaling": "2e-1",
+      "seed": 0,
+      "epochs": 6000,
+      "slope": [
+        "0.01",
+        "0.1",
+        "0.5",
+        "0.9",
+        "1.0"
+      ],
+      "lambdas": [
+        "0"
+      ]
+    },
+    "BarlowTwins_leakyrelu_log": {
+      "only_log_init": true,
+      "lr": "1e-2",
+      "scaling": "2e-1",
+      "seed": 0,
+      "epochs": 6000,
+      "lambdas": [
+        "0"
+      ]
+    },
+    "BarlowTwins_multi": {
+      "layer": 2,
+      "lr": "1e-4",
+      "scaling": "1e-6",
+      "seed": 0,
+      "epochs": 3000,
+      "lambdas": [
+        "1"
+      ]
+    },
+    "BarlowTwins": {
+      "balanced": false,
+      "aligned": false,
+      "lr": "1e-2",
+      "scaling": "6e-1",
+      "seed": 0,
+      "epochs": 18000,
+      "lambdas": [
+        "0",
+        "0.1",
+        "0.2",
+        "0.3",
+        "0.4",
+        "0.5",
+        "0.6",
+        "0.7",
+        "0.8",
+        "0.9",
+        "1"
+      ]
+    },
+    "SimCLR": {
+      "seed": 0,
+      "epochs": 1000,
+      "lr": "2e-6",
+      "scaling": "4e-8"
+    },
+    "VICReg": {
+      "batch": 10000,
+      "seed": 0,
+      "epochs": 4000,
+      "lr": "8e-3",
+      "scaling": "7e-1"
+    }
+  },
+  "loss_type": "SimCLR",
+  "alpha": null,
+  "steps": 1000,
+  "batch_size": 1000,
+  "learning_rate": 2e-06,
+  "scaling": 4e-08,
+  "layer_weight_multiplier": 0.01414213562373095,
+  "activation": "ReLU",
+  "widths": [
+    8,
+    8,
+    8,
+    8,
+    2
+  ],
+  "augmentation_noise_std": 0.01,
+  "effective_balanced": false,
+  "effective_aligned": false,
+  "loss_eigenvalue_steps": "pre-update 0..N-1",
+  "weight_diagnostic_steps": "initial plus post-update 0..N",
+  "nonlinear_diagnostic_caveat": "For MLP, FA/SA/get_total_weight use the product of Linear weights, not the actual nonlinear map.",
+  "slope": null,
+  "paper_figures": [
+    8,
+    29
+  ],
+  "batch_normalization": false,
+  "objective_parameters": {
+    "temperature": 0.5,
+    "use_batchnorm": false
+  },
+  "initialization_group": "extent_mlp_SimCLR_slopeNone",
+  "gamma_provenance": "New deterministic Gamma preparation seed=0. Original notebook does not set a seed before Gamma; original train then resets its own configured seed. Gamma enters the actual initialization only for balanced+aligned ideal jobs; it is a diagnostic for other jobs.",
+  "status": "completed",
+  "started_at_utc": "2026-11-03T15:55:16.847695+00:00",
+  "environment_sha256": "63209caf9fc64abce90f8ad5fd325f9a96e58e3a315bd901adc62d5732b35252",
+  "adapter_sha256": "60d8446dac397c53168066ce3e7b45a1a0284da4467dba7e4ebffc2102147f1b",
+  "gamma_rng_seed": 0,
+  "training_seed_reset_inside_original_function": 0,
+  "optimizer_loop_modified": false,
+  "adapter_changes": [
+    "omit notebook plot/library/load/save cells",
+    "explicit gamma preparation seed0",
+    "capture CPU model state before/after original epoch loop",
+    "disable progress rendering only",
+    "dispatch original cell12 objective and slope arguments"
+  ],
+  "gamma_diagnostic_sha256": "19123b55ed8cd3b8b5a8f0c9e5bcf4e73aa407216b1090de550e2b3e3e78a767",
+  "executed_train_sha256": "6fe92187de02d85a2af69ca5e0de5fe37cf9fe4c807e15cef4d2d8758feee1d8",
+  "initialization_diagnostics_sha256": "17bbbf032eec39ac1222fc857978da0bb125cb004c94183e849c21963a23c4ee",
+  "seconds": 162.83494789991528,
+  "actual_loss_steps": 1000,
+  "finite_by_array": {
+    "w": true,
+    "u0": true,
+    "s0": true,
+    "v0": true,
+    "loss": true,
+    "eiglist": true,
+    "weight_singular": true,
+    "subspace_alignment": true,
+    "feature_weight_r_singular_alignment": true,
+    "feature_alignment": true
+  },
+  "final_weights_finite": true,
+  "lengths_match": true,
+  "initial_state_sha256": "ae5791b92199135ee9c1078f88a038fdbb8c60d36a7bf3fa6e006ff4fd10351f",
+  "loss_first": 7.59319543838501,
+  "loss_last": 6.649722099304199,
+  "eigenvalues_last": [
+    7.633611798399484e-17,
+    3.5284140108445594e-17
+  ],
+  "trace_shapes": {
+    "w": [
+      2,
+      8
+    ],
+    "u0": [
+      2,
+      2
+    ],
+    "s0": [
+      2
+    ],
+    "v0": [
+      8,
+      8
+    ],
+    "loss": [
+      1000
+    ],
+    "eiglist": [
+      2,
+      1000
+    ],
+    "weight_singular": [
+      2,
+      1001
+    ],
+    "subspace_alignment": [
+      1001
+    ],
+    "feature_weight_r_singular_alignment": [
+      2,
+      2,
+      1001
+    ],
+    "feature_alignment": [
+      2,
+      1001
+    ]
+  },
+  "artifact_sha256": {
+    "traces.npz": "0227c2b8d224d264495d2e232aa2611c51984e3e0a874eb4b8337bca075e8c55",
+    "initial_weights.npz": "58cb33fecd375573e05aeaeb0a2ee3349272744f53125acba7125b64f108feef",
+    "final_weights.npz": "b3ee8bdb904e2e55bb196fe6504bdf6ed3e2c52db9462e43f36d987fd63298be"
+  },
+  "ended_at_utc": "2026-11-03T15:57:59.751173+00:00"
+}

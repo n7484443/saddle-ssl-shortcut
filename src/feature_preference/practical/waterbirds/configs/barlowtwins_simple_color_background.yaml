@@ -1,0 +1,21 @@
+batch_size: 32
+dataset: "WaterBirds"
+input_size: 128
+ratio: "0.05"
+weight_decay: 1e-6
+report_frequency: 10
+save_frequency: 40
+learning_rate_decay: 0.995
+use_trainset_on_test: False
+augmentation: True
+full_batch: False
+
+dataset_directory: "waterbird_simple_color_background"
+method: "BarlowTwins_simple_color_background"
+seed: 0
+lambdas: "0.05"
+model: "ResNet-34"
+
+lr: 5e-5
+scaling: 2.7e-1
+epochs: 200

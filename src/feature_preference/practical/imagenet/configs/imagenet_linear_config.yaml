@@ -1,0 +1,17 @@
+n_last_blocks: 4 #Concatenate [CLS] tokens for the `n` last blocks. We use `n=4` when evaluating ViT-Small and `n=1` with ViT-Base.
+avgpool_patchtokens: False #Whether ot not to concatenate the global average pooled features to the [CLS] token. We typically set this to False for ViT-Small and to True with ViT-Base.
+arch: 'resnet50'
+patch_size: 16 #Patch resolution of the model.
+epochs: 10
+lr: 0.002
+batch_size: 512 #Total batch-size
+#batch_size_per_gpu: 512 #Per-GPU batch-size
+dist_url: "tcp://localhost" #url used to set up distributed training; see https://pytorch.org/docs/stable/distributed.html
+local_rank: 0 #Please ignore and do not set this argument.
+data_path: '/home/dataset/imagenet'
+num_workers: 10
+val_freq: 1 #Epoch frequency for validation.
+
+output_dir: '/models/jhkim/imagenet500_lambda0.01/200'
+num_labels: 1000 #Number of labels for linear classifier
+evaluate: True #evaluate model on validation set

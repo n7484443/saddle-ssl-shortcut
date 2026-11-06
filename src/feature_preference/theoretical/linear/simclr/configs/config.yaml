@@ -1,0 +1,9 @@
+network: "linear"
+
+sizes: [40, 30, 20, 5, 3]
+
+batch: 600
+seed: 0
+epochs: 400
+lr: 5e-5
+scaling: 1e-3

@@ -1,0 +1,11 @@
+network: "linear"
+
+sizes: [6, 2]
+
+batch: 1000
+singular_balance: False
+lr: 8e-4
+scaling: 5e-4
+seed: 0
+epochs: 10000
+lambdas: ["0", "0.015","0.03","0.05", "0.1", "0.2", "0.4", "0.8"]

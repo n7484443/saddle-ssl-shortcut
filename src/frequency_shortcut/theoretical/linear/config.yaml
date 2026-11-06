@@ -1,0 +1,27 @@
+network: "linear"
+
+amplitude: [0.5, 1]
+frequency: [2, 16]
+frequency_div: 24
+sizes: 96
+
+batch: 10000
+BarlowTwins:
+  lr: 1e-3
+  scaling: 1e-4
+  seed: 0
+  epochs: 500
+  lambdas: ["0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1"]
+
+SimCLR:
+  seed: 0
+  epochs: 500
+  lr: 1e-18
+  scaling: 1e-16
+
+VICReg:
+  seed: 0
+  epochs: 5000
+  lr: 4e-4
+  scaling: 1e-10
+  lambdas: ["0", "0.1", "0.5", "1"]

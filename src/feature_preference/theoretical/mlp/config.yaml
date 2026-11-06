@@ -1,0 +1,60 @@
+network: "mlp"
+
+batch: 1000
+layer: 4
+mid_layer_size: 8
+sizes: [6, 2]
+
+BarlowTwins_test_relu:
+  lr: 3e-2
+  scaling: 6e-1
+  seed: 0
+  epochs: 6000
+  lambdas: ["1"]
+
+BarlowTwins_test_leakyrelu:
+  lr: 1e-2
+  scaling: 2e-1
+  seed: 0
+  epochs: 6000
+  slope: ["0.01", "0.1", "0.5", "0.9", "1.0"]
+  lambdas: ["0"]
+
+BarlowTwins_leakyrelu_log:
+  only_log_init: True
+  lr: 1e-2
+  scaling: 2e-1
+  seed: 0
+  epochs: 6000
+  lambdas: ["0"]
+
+
+BarlowTwins_multi:
+  layer: 2
+  lr: 1e-4
+  scaling: 1e-6
+  seed: 0
+  epochs: 3000
+  lambdas: ["1"]
+
+BarlowTwins:
+  balanced: False
+  aligned: False
+  lr: 1e-2
+  scaling: 6e-1
+  seed: 0
+  epochs: 18000
+  lambdas: ["0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1"]
+
+SimCLR:
+  seed: 0
+  epochs: 1000
+  lr: 2e-6
+  scaling: 4e-8
+
+VICReg:
+  batch: 10000
+  seed: 0
+  epochs: 4000
+  lr: 8e-3
+  scaling: 7e-1

@@ -1,0 +1,13 @@
+network:
+  type: "linear"
+method:
+  loss: "BarlowTwins"
+  batch_norm: False
+  lambdas: ["1"]
+
+sizes: [6, 2]
+batch: 1000
+epochs: 10000
+lr: 8e-4
+scaling: 5e-4
+seed: 0

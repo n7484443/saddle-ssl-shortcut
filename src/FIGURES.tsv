@@ -1,0 +1,49 @@
+Figure	Plot	Experiment
+1	figures/cmnist/plot.py;figures/datasets/plot.py	feature_preference/practical/colored_mnist/generate_cmnist.ipynb
+2	feature_preference/theoretical/old/toy_linear.ipynb	
+3	figures/waterbirds/plot.py	feature_preference/practical/waterbirds/waterbirds_plot.ipynb
+4	figures/imagenet_heatmap/plot.py;figures/imagenet_heatmap/compose.py	feature_preference/practical/imagenet/inference.py
+5	frequency_shortcut/theoretical/old/toy_freq_linear.ipynb	
+6	figures/backdoor/plot.py	frequency_shortcut/practical/mnist_backdoor/mnist_backdoor_generation.ipynb
+7	figures/cmnist/plot.py;feature_preference/theoretical/linear/barlowtwins_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
+8	feature_preference/theoretical/deep/balanced_renderer.ipynb;feature_preference/theoretical/mlp/barlowtwins_renderer.ipynb;feature_preference/theoretical/mlp/simclr_renderer.ipynb	figures/simclr_dln/plot.py
+9	figures/faint_vivid/plot.py;figures/faint_vivid/examples.py	faint_vivid/train_bc.py;faint_vivid/train_bc_sh.py
+10	feature_preference/theoretical/linear/barlowtwins_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
+11	figures/amplitude_linear/plot.py	frequency_shortcut/theoretical/amplitude_bias.ipynb
+12	feature_preference/theoretical/old/toy_linear.ipynb	
+13	frequency_shortcut/theoretical/old/toy_freq_linear.ipynb	
+14	frequency_shortcut/theoretical/old/toy_freq_linear.ipynb	
+15	frequency_shortcut/theoretical/old/toy_freq_linear.ipynb	
+16	frequency_shortcut/theoretical/old/toy_freq_linear.ipynb	
+17	feature_preference/theoretical/old/toy_linear.ipynb;frequency_shortcut/theoretical/old/toy_freq_linear.ipynb	
+18	feature_preference/theoretical/old/toy_linear.ipynb	
+19	feature_preference/theoretical/old/toy_linear.ipynb	
+20	frequency_shortcut/theoretical/old/toy_freq_linear.ipynb	
+21	frequency_shortcut/theoretical/old/toy_freq_linear.ipynb	
+22	feature_preference/theoretical/deep/balanced_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
+23	feature_preference/theoretical/deep/barlowtwins_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
+24	frequency_shortcut/theoretical/deep/amplitude_bias_deep_renderer.ipynb	frequency_shortcut/theoretical/amplitude_bias.ipynb
+25	feature_preference/theoretical/mlp/barlowtwins_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
+26	frequency_shortcut/theoretical/mlp/amplitude_bias_mlp_renderer.ipynb	frequency_shortcut/theoretical/amplitude_bias.ipynb
+27	feature_preference/theoretical/linear/simclr/simclr_renderer.ipynb	feature_preference/theoretical/linear/simclr/simclr_extent_bias.py
+28	feature_preference/theoretical/five_features/plot.py	feature_preference/theoretical/five_features/train.py
+29	feature_preference/theoretical/deep/simclr_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
+30	feature_preference/theoretical/mlp/simclr_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
+31	feature_preference/theoretical/linear/vicreg_renderer.ipynb	feature_preference/theoretical/extent_bias_vicreg.ipynb
+32	feature_preference/theoretical/deep/vicreg_renderer.ipynb	feature_preference/theoretical/extent_bias_vicreg.ipynb
+33	feature_preference/theoretical/mlp/vicreg_renderer.ipynb	feature_preference/theoretical/extent_bias_vicreg.ipynb
+34	frequency_shortcut/theoretical/old/toy_freq_multi_layer.ipynb	
+35	figures/backdoor_objectives/plot.py	frequency_shortcut/practical/mnist_backdoor_others/mnist_backdoor.py
+36	figures/backdoor_whitening/plot.py	frequency_shortcut/practical/mnist_backdoor_whitening/mnist_backdoor.py
+37	figures/waterbirds/plot.py	feature_preference/practical/waterbirds/waterbirds_c_plot.ipynb
+38	feature_preference/practical/waterbirds/waterbirds_plot.ipynb	feature_preference/practical/waterbirds/generate_waterbirds.ipynb
+39	imagenet_analysis/imagenet_reproduction.py	imagenet_analysis/reproduce_historical_20point.py
+40	figures/extent_amplitude/plot.py	frequency_shortcut/practical/mnist_backdoor_hadamard_grid/mnist_backdoor_grid.py
+41	feature_preference/theoretical/mlp/leaky_relu_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
+42	figures/initial_eigenvalues/plot.py	feature_preference/theoretical/mlp/leaky_relu_eigenvalues.ipynb
+43	frequency_shortcut/theoretical/old/toy_freq_multi_layer.ipynb	
+44	feature_preference/theoretical/augmentation/extent_bias_augmentation.ipynb	
+45	feature_preference/theoretical/augmentation/rrc_viewer.ipynb	feature_preference/theoretical/augmentation/rrc_color.py
+46	feature_preference/theoretical/augmentation/rrc_viewer.ipynb	feature_preference/theoretical/augmentation/rrc_color.py
+47	figures/waterbirds_augmentation/plot.py	feature_preference/practical/waterbirds/waterbirds.py
+48	figures/faint_vivid/plot.py;figures/faint_vivid/examples.py	faint_vivid/train_bc.py;faint_vivid/train_bc_sh.py

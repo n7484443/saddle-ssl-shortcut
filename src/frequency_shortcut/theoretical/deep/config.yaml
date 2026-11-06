@@ -1,0 +1,31 @@
+network: "deep"
+
+batch: 2000
+layer: 4
+mid_layer_size: 96
+
+amplitude: [0.5, 1]
+frequency: [2, 16]
+frequency_div: 24
+sizes: 96
+
+BarlowTwins:
+  balanced: False
+  aligned: False
+  lr: 1e-3
+  scaling: 4e-1
+  seed: 0
+  epochs: 8000
+  lambdas: ["0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1"]
+
+SimCLR:
+  seed: 0
+  epochs: 1000
+  lr: 1e-6
+  scaling: 8e-3
+
+VICReg:
+  seed: 0
+  epochs: 10000
+  lr: 1e-3
+  scaling: 7e-1

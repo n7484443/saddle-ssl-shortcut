@@ -1,0 +1,17 @@
+batch_size: 256
+network: "ResNet-18"
+dataset: "Colored MNIST"
+dataset_directory: "cmnist"
+input_size: 48
+ratio: "0.05"
+weight_decay: 1e-6
+report_frequency: 300 #100
+seed: 1
+lambdas: 0.05
+method: "BarlowTwins"
+lr: 5e-6 #1e-4
+scaling: 8e-2 #1e-1
+epochs: 150
+optimizer: "SGD"
+zero_init_residual: True
+

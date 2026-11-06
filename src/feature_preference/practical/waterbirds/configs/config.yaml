@@ -1,0 +1,59 @@
+batch_size: 32
+network: ["ResNet-34"]
+dataset: "WaterBirds"
+input_size: 128
+ratios: ["0.05"]
+weight_decay: 1e-6
+report_frequency: 10
+save_frequency: 40
+learning_rate_decay: 0.995
+#  input_size: 256
+#  batch_size: 64
+#  use_trainset_on_test: True
+#  report_frequency: 200
+#  save_frequency: 200
+#  learning_rate_decay: 1
+#  dataset_directory: "waterbird_notest"
+#  seed: 0
+#  lambdas:
+#    "0.005":
+#      "ResNet-34":
+#        lr: 5e-4
+#        scaling: 4e-2
+#        epochs: 1000
+#BarlowTwins_notest_nspurious:
+#  input_size: 256
+#  batch_size: 64
+#  use_trainset_on_test: True
+#  report_frequency: 200
+#  save_frequency: 200
+#  learning_rate_decay: 1
+#  dataset_directory: "waterbird_notest_nspurious"
+#  seed: 0
+#  lambdas:
+#    "0.01":
+#      "ResNet-34":
+#        lr: 5e-4
+#        scaling: 4e-2
+#        epochs: 1000
+#
+#
+#SimCLR:
+#  seed: 0
+#  epochs: 1000
+#  "ResNet-34":
+#    lr: 1e-3
+#    scaling: 1e-3
+#  "Vit-B":
+#    lr: 1e-3
+#    scaling: 1e-3
+#
+#VICReg:
+#  "ResNet-34":
+#    epochs: 1000
+#    lr: 1e-3
+#    scaling: 1e-3
+#  "Vit-B":
+#    epochs: 1000
+#    lr: 1e-3
+#    scaling: 1e-3

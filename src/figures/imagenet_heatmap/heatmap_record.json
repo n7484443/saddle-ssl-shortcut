@@ -1,0 +1,195 @@
+{
+  "status": "complete_frozen",
+  "source_notebook": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\neurips2026_submit\\neurips\\feature_preference\\practical\\imagenet\\shortcut_statics.ipynb",
+  "source_notebook_sha256": "7c0f0c61bde10fa8ef3b5f8b2ce4135d786167b53c39d915b4c46d55bea347e5",
+  "source_cell": 17,
+  "original_pdf": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\latex\\fig\\dim\\practical\\imagenet\\spuriosity_orig.pdf",
+  "original_pdf_sha256": "2d4064c375b0c415ea4f5aebc63dc96d07f73fbf4a940b1ff10e3a4dc24a4671",
+  "new_inference_directory": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\main\\reinference_20261105\\full_original12",
+  "input_sha256": {
+    "completion": "fa670f09b7222e0d8086e00ea4a77e304ad9c2a3775f72ba0e619a6a7b9736f4",
+    "sample_manifest": "f4239e1c1391d59dd796147a7f542b7312522b65cc1490fcf9229bd11f15dc9a",
+    "paper_ratios": "f91d73160a63b899a924d5f06b8e6afa73ef15acfd0d41f4dd0ee17f8f9943b7",
+    "0_200": "638cbc6d3d157d64c1c0fca05e993e79c310769bd2569bdd064faabf18cb2efa",
+    "2_1400": "dad894d304032250cde1617f77190e368e37065e01955c921790486696e410bb",
+    "5_3400": "2d5b22b9cf8f9df1bfdeb542f4c10ce8f48e0c0cb6bf15a02d571931a77f3526",
+    "10_6800": "4a7f861e3eddc29eb8fbb7924bae03d165a0d5011c15f59beea9d90e0f1361a2",
+    "20_13400": "a2aaf7a609a96410535fd8d3fc6b28275b6ffa026e7598b57742f11acb249670",
+    "30_20200": "2f217066c11c9d810b29428c20a8afd52af86641906b9282bf1b5d8c4814faf0",
+    "40_26800": "cff01f7ea1ec558670688857c1edcf579e4bc47c32896f386a3a549958ac5cbd",
+    "50_33400": "fedcccb380ae1b82d856c8509925e93a4cb6a23ef1fba223c2c0012b9c5764b8",
+    "60_40200": "867aa81878799f7d2f9fe370ddce029f861639a7c8fd6321780a3d1c8a0126ad",
+    "70_46800": "5b1470fd3e98d547973e7677c86a0674afe6969c418a271d159a69125fcbe8b3",
+    "80_53600": "ba95a4f0ba4cd125bd9cfac6bb7d41f14117445e5c80285e2aa66d6fef38c693",
+    "99_66799": "33835c91d88c0c465978adae94b63d13ab1cd965fab9590baa69c5a0a74bda1f",
+    "inference_cache.pkl": "b9b8442ecc68c1d5762f1c6f60d3698173bd87b8810066b678a77d9172d09dec"
+  },
+  "inference_policy": {
+    "sample_manifest_sha256": "f4239e1c1391d59dd796147a7f542b7312522b65cc1490fcf9229bd11f15dc9a",
+    "sample_count": 50000,
+    "smoke": false,
+    "steps": [
+      "0_200",
+      "2_1400",
+      "5_3400",
+      "10_6800",
+      "20_13400",
+      "30_20200",
+      "40_26800",
+      "50_33400",
+      "60_40200",
+      "70_46800",
+      "80_53600",
+      "99_66799"
+    ],
+    "batch_size": 64,
+    "original_source_batch_size": 512,
+    "workers": 4,
+    "pin_memory": false,
+    "sample_selection": "all samples in manifest order",
+    "autocast": "bfloat16",
+    "confidence_arithmetic": "original BF16; float32 cast only after CPU for NumPy",
+    "mask_policy": "original PIL rectangle union; bicubic256/CenterCrop224; >0.5; multiply normalized RGB",
+    "adapter_sha256": "a6392f423b3f1fff5334fcdd88275bfcc2354372123f3985337e355cd566ccfa",
+    "source_snapshot_sha256": "315842a87abf0867e52fb2e508a6868f6f66d530cb41df3259c7a805fce6ad8d"
+  },
+  "steps": [
+    "0_200",
+    "2_1400",
+    "5_3400",
+    "10_6800",
+    "20_13400",
+    "30_20200",
+    "40_26800",
+    "50_33400",
+    "60_40200",
+    "70_46800",
+    "80_53600",
+    "99_66799"
+  ],
+  "source_aggregation": "mean of per-image 100*(bg_top5-obj_top5), exclude bbox ratio==0, pd.cut 25 bins, per-step pivot mean",
+  "rows": 597804,
+  "unique_samples": 49817,
+  "unique_classes": 1000,
+  "bin_count": 25,
+  "matrix_shape": [
+    25,
+    12
+  ],
+  "x_edges": [
+    0,
+    200,
+    1400,
+    3400,
+    6800,
+    13400,
+    20200,
+    26800,
+    33400,
+    40200,
+    46800,
+    53600,
+    66799
+  ],
+  "y_edges": [
+    -0.0008204520089285716,
+    0.04017219387755102,
+    0.08016501913265306,
+    0.1201578443877551,
+    0.16015066964285712,
+    0.20014349489795916,
+    0.24013632015306122,
+    0.28012914540816325,
+    0.3201219706632653,
+    0.36011479591836737,
+    0.4001076211734694,
+    0.44010044642857143,
+    0.4800932716836735,
+    0.5200860969387755,
+    0.5600789221938774,
+    0.6000717474489795,
+    0.6400645727040816,
+    0.6800573979591836,
+    0.7200502232142857,
+    0.7600430484693876,
+    0.8000358737244897,
+    0.8400286989795918,
+    0.8800215242346938,
+    0.9200143494897959,
+    0.9600071747448979,
+    1.0
+  ],
+  "matrix_min": -77.34138972809667,
+  "matrix_max": 28.149190710767066,
+  "figure_inches": [
+    14,
+    10
+  ],
+  "pdf_canvas_points": [
+    1008,
+    720
+  ],
+  "color_map": "RdBu_r",
+  "color_limits": [
+    -60,
+    60
+  ],
+  "cbar_tick_font_sizes": [
+    20.9,
+    20.9,
+    20.9,
+    20.9,
+    20.9,
+    20.9,
+    20.9
+  ],
+  "source_adjustments": [
+    "PDF/PS fonttype42",
+    "load completed safe NPZ arrays behind regenerated compatibility pickle",
+    "use frozen manifest-ordered exact ratio sidecar",
+    "vectorized identical per-image aggregation",
+    "omit stale unrelated prior-figure cbar mutation",
+    "write separate output paths"
+  ],
+  "plot_input_from_original_pdf": false,
+  "historical_pixel_or_numeric_identity_claimed": false,
+  "raw_cache_modifications": 0,
+  "training": false,
+  "cuda_initialized": false,
+  "environment": {
+    "python": "3.12.9 (main, Feb 12 2025, 14:52:31) [MSC v.1942 64 bit (AMD64)]",
+    "matplotlib": "3.10.6",
+    "seaborn": "0.13.2",
+    "numpy": "2.5.2"
+  },
+  "exports": [
+    {
+      "path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\staging\\dim\\practical\\imagenet\\spuriosity_orig.pdf",
+      "sha256": "b4e377e3fe005fb65f6ac03c2765d67dd1514a04b8f358e46c9361cd21021642"
+    },
+    {
+      "path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\staging\\dim\\practical\\imagenet\\spuriosity_orig.png",
+      "sha256": "fd5d1c7ce25d5bfb0db2ab5c9332c6314dac0c4129d82fe061713b5cf3a34506"
+    }
+  ],
+  "unicode_correction": {
+    "raw_pdf": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\raw_plot_pdf\\spuriosity_orig.pdf",
+    "raw_sha256": "531ec5c616a6ac726fa49c561915dbcc71853c49e205b43353459ff6c5d71508",
+    "final_pdf": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\staging\\dim\\practical\\imagenet\\spuriosity_orig.pdf",
+    "final_sha256": "b4e377e3fe005fb65f6ac03c2765d67dd1514a04b8f358e46c9361cd21021642",
+    "changes": [
+      {
+        "font": "/CGMMQU+Cmsy10",
+        "cid_hex": "00a1",
+        "old_unicode": "U+00A1",
+        "new_unicode": "U+2212"
+      }
+    ],
+    "purpose": "New replot pipeline Unicode correction, not graphics or font substitution",
+    "font_program_or_glyph_modified": false,
+    "notebook": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\replot_spuriosity.py",
+    "notebook_sha256": "a4bc616cb4a3bae94b8b4d1a20ef74257df73a428bf1d5c8ce11bed5926d7c50"
+  },
+  "verification": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\verification.json",
+  "pre_unicode_records_preserved": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\raw_plot_pdf"
+}

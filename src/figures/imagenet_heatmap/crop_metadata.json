@@ -1,0 +1,175 @@
+{
+  "task": "Figure 4 0.8/0.2-bin examples: unchanged high crop and revised low crop",
+  "metadata_sources": {
+    "high_crop_metadata_source.json": "b73dc30eb268f10c77f76f16729ddd3b62a37d8d38f58fad38bd13fc51e11028",
+    "low_crop_metadata_source.json": "c21e4e190ab0c3cf6e734acac6018591c078d8afd411f1e4f1325ecee578404b"
+  },
+  "images": [
+    {
+      "role": "high",
+      "target_ratio": 0.8,
+      "original_path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\\ub17c\ubb38\\Imagenet\\val\\ILSVRC2012_val_00029932.JPEG",
+      "xml_path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\\ub17c\ubb38\\Imagenet\\bbox\\val\\ILSVRC2012_val_00029932.xml",
+      "original_sha256_before": "bb68308fb1603dd7d644c94762ebc882df1f25a88288e11e8e0e7d4479f0347f",
+      "original_sha256_after": "bb68308fb1603dd7d644c94762ebc882df1f25a88288e11e8e0e7d4479f0347f",
+      "xml_sha256_before": "1c600f90512f4c158f082434d59d2476b83d22c5733a16bf15f4542204251439",
+      "xml_sha256_after": "1c600f90512f4c158f082434d59d2476b83d22c5733a16bf15f4542204251439",
+      "original_unchanged": true,
+      "xml_unchanged": true,
+      "original_size_wh": [
+        478,
+        500
+      ],
+      "resized_size_wh": [
+        256,
+        267
+      ],
+      "torchvision_center_crop_left_top": [
+        16,
+        22
+      ],
+      "paper_helper_floor_crop_left_top": [
+        16,
+        21
+      ],
+      "crop_offset_difference_xy": [
+        0,
+        1
+      ],
+      "paper_fig4_bbox_ratio": 0.7991071428571429,
+      "paper_fig4_bbox_pixels": 40096,
+      "bbox_geometry_ratio_using_actual_tv_crop": 0.7991071428571429,
+      "actual_tv_bbox_pixels": 40096,
+      "actual_binary_pil_mask_ratio_separate": 0.7991071428571429,
+      "actual_binary_pil_mask_pixels": 40096,
+      "binary_pil_mask_not_used_as_figure4_ratio": true,
+      "boxes": [
+        {
+          "xml_xyxy": [
+            95,
+            16,
+            429,
+            488
+          ],
+          "resized_xyxy": [
+            50.87866108786611,
+            8.544,
+            229.7573221757322,
+            260.592
+          ],
+          "mapped_xyxy": {
+            "torchvision": [
+              34,
+              0,
+              213,
+              224
+            ],
+            "paper_helper": [
+              34,
+              0,
+              213,
+              224
+            ]
+          }
+        }
+      ],
+      "output_path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\\ub17c\ubb38\\output\\rebuttal_agents\\ssl_backdoor\\object_ratio_crops_20261105\\high_ratio_0p8_crop.png",
+      "output_size_wh": [
+        224,
+        224
+      ],
+      "output_mode": "RGB",
+      "output_file_sha256": "a1427387e96ef362e3b709f7b285a8e01fc80fc8a3936ed5de235722422810d2",
+      "output_rgb_pixels_sha256": "b29b58d444055cdd15363200fae85f8c294e87fefdb43ec54e6a77772f6336cc",
+      "png_roundtrip_pixels_identical": true,
+      "direct_functional_resize_then_manual_center_crop_pixels_identical": true,
+      "normalized_input_tensor_roundtrip_identical": true,
+      "no_overlay": true
+    },
+    {
+      "role": "low",
+      "class_wnid": "n02099712",
+      "class_name": "Labrador retriever",
+      "selection_note": "No beagle validation image within 0.2 +/-0.01; another dog class was explicitly approved. Chosen for a clear single whole dog on grass, full bbox retention, ratio within 0.005. Existing high-ratio beagle crop is unchanged.",
+      "target_ratio": 0.2,
+      "original_path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\\ub17c\ubb38\\Imagenet\\val\\ILSVRC2012_val_00016148.JPEG",
+      "xml_path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\\ub17c\ubb38\\Imagenet\\bbox\\val\\ILSVRC2012_val_00016148.xml",
+      "original_sha256_before": "ef14af41a0e93ef116f48ac7d5fd0f4033a4a14a8501a36548bd94dfbf95d580",
+      "original_sha256_after": "ef14af41a0e93ef116f48ac7d5fd0f4033a4a14a8501a36548bd94dfbf95d580",
+      "xml_sha256_before": "68a5a7347b0015119c4ad24162dd7c6d6d6b8deb8733c503ae9d6da7430819ae",
+      "xml_sha256_after": "68a5a7347b0015119c4ad24162dd7c6d6d6b8deb8733c503ae9d6da7430819ae",
+      "original_unchanged": true,
+      "xml_unchanged": true,
+      "original_size_wh": [
+        500,
+        375
+      ],
+      "resized_size_wh": [
+        341,
+        256
+      ],
+      "torchvision_center_crop_left_top": [
+        58,
+        16
+      ],
+      "paper_helper_floor_crop_left_top": [
+        58,
+        16
+      ],
+      "crop_offset_difference_xy": [
+        0,
+        0
+      ],
+      "paper_fig4_bbox_ratio": 0.19730548469387754,
+      "paper_fig4_bbox_pixels": 9900,
+      "bbox_geometry_ratio_using_actual_tv_crop": 0.19730548469387754,
+      "actual_tv_bbox_pixels": 9900,
+      "actual_binary_pil_mask_ratio_separate": 0.20129145408163265,
+      "actual_binary_pil_mask_pixels": 10100,
+      "binary_pil_mask_not_used_as_figure4_ratio": true,
+      "boxes": [
+        {
+          "full_bbox_retained_by_actual_crop": true,
+          "xml_xyxy": [
+            140,
+            144,
+            301,
+            276
+          ],
+          "resized_xyxy": [
+            95.48,
+            98.304,
+            205.282,
+            188.416
+          ],
+          "mapped_xyxy": {
+            "torchvision": [
+              37,
+              82,
+              147,
+              172
+            ],
+            "paper_helper": [
+              37,
+              82,
+              147,
+              172
+            ]
+          }
+        }
+      ],
+      "output_path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\\ub17c\ubb38\\output\\rebuttal_agents\\ssl_backdoor\\object_ratio_crops_0p2_20261105\\low_ratio_0p2_crop.png",
+      "output_size_wh": [
+        224,
+        224
+      ],
+      "output_mode": "RGB",
+      "output_file_sha256": "eae8e4c5583da066caf3d91eebb3ed37d202c2859cccd0a071c4469cac42aafb",
+      "output_rgb_pixels_sha256": "184d01e657fad2f259872dfdc644674086d7316d91243db97581be118c68cc1a",
+      "png_roundtrip_pixels_identical": true,
+      "direct_functional_resize_then_manual_center_crop_pixels_identical": true,
+      "normalized_input_tensor_roundtrip_identical": true,
+      "no_overlay": true
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+*.npz binary
+*.npy binary
+*.pdf binary
+*.png binary
+*.jpg binary
+*.pt binary
+*.pth binary

@@ -1,0 +1,19 @@
+workers: 10
+#epochs: 100
+epochs: 500
+batch_size: 2048 #original code: 2048
+learning_rate_weights: 0.2
+learning_rate_biases: 0.0048
+projector: '8192-8192-8192'
+lambd: 0.0051
+weight_decay: 1e-6
+
+checkpoint_freq: 10
+seed: 0
+
+checkpoint_dir: '/models/jhkim/imagenet500'
+data: '/home/dataset/imagenet'
+
+#start_checkpoint: '/models/jhkim/bt-imagenet/59.pth'
+#start_epoch: 89
+#freeze_backbone_epochs: 91
