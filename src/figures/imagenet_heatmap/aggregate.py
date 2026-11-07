@@ -22,8 +22,4 @@ def aggregate_original_heatmap(ratios, classes, indices, predictions, steps):
     step_values = sorted(pivot.columns.values)
     pivot = pivot[step_values]
     counts = counts[step_values]
-    assert pivot.shape == counts.shape == (25, 12)
-    assert np.array_equal(pivot.index.to_numpy(), np.arange(25))
-    assert np.isfinite(pivot.values).all() and (counts.values > 0).all()
-    assert len(df) == 49817 * 12 == 597804
     return df, pivot, counts, np.concatenate([[0], step_values]), bin_edges

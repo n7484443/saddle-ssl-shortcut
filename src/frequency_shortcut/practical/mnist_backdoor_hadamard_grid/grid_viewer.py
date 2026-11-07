@@ -44,7 +44,7 @@ def _(ROOT, mo, pl):
         f"sizes **{sorted(df['size_mult'].unique().to_list())}** &nbsp;|&nbsp; "
         f"intensities **{sorted(df['intensity'].unique().to_list())}**"
     )
-    return (df,)
+    return df,
 
 
 @app.cell
@@ -62,7 +62,7 @@ def _(df, pl):
         )
         .sort(["spuriosity", "size_mult", "intensity", "step"])
     )
-    return (agg,)
+    return agg,
 
 
 @app.cell
@@ -204,46 +204,6 @@ def _(intensities, mo, pl, plt, sel_spur, size_labels, size_mults, sns, step_opt
     fig_c.suptitle(f"spuriosity={sel_spur.value}", y=1.0)
     fig_c.tight_layout()
     fig_c
-    return
-
-
-@app.cell
-def _(intensities, mo, pl, sel_step, size_mults, view):
-    # Report grid cells that have no row at the selected step, and where they do
-    present = set(
-        view.filter(pl.col("step") == sel_step.value)
-        .select("size_mult", "intensity")
-        .iter_rows()
-    )
-    gaps = []
-    for _sm in size_mults:
-        for _it in intensities:
-            if (_sm, _it) in present:
-                continue
-            steps = (
-                view.filter((pl.col("size_mult") == _sm) & (pl.col("intensity") == _it))
-                .sort("step")["step"]
-                .to_list()
-            )
-            gaps.append(
-                f"- size **{_sm}x**, intensity **{_it:g}** — "
-                + (f"has steps `{steps}`" if steps else "**no rows at all** (run never finished)")
-            )
-
-    mo.md(
-        f"Missing at step {sel_step.value}:\n\n" + "\n".join(gaps)
-    ).callout(kind="warn") if gaps else mo.md("")
-    return
-
-
-@app.cell
-def _(mo, pl, sel_step, view):
-    table = (
-        view.filter(pl.col("step") == sel_step.value)
-        .select("intensity", "size_label", "acc", "std", "n_seeds")
-        .sort(["intensity", "size_label"])
-    )
-    mo.ui.table(table, selection=None)
     return
 
 

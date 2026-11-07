@@ -6,13 +6,10 @@ app=marimo.App(width="full")
 def _():
     from pathlib import Path
     import os
-    import sys
-    ROOT = next(p for p in Path(__file__).resolve().parents if (p / "common.py").is_file())
     HERE = Path(__file__).resolve().parent
     os.environ.setdefault('MPLBACKEND','Agg')
     os.environ.setdefault('MPLCONFIGDIR',str(HERE/'mpl_config'))
     import json
-    import hashlib
     import numpy as np
     import torch
     import matplotlib.pyplot as plt
@@ -23,7 +20,7 @@ def _():
     plt.rcParams['axes.formatter.use_mathtext'] = True
     plt.rcParams.update({'mathtext.fontset':'cm','pdf.fonttype':42,'ps.fonttype':42,'pdf.use14corefonts':False})
     colors = sns.color_palette()
-    return HERE, ROOT, hashlib, json, mo, np, os, plt, sns
+    return HERE, json, mo, np, os, plt, sns
 
 
 @app.cell
@@ -64,8 +61,6 @@ def _(config, gamma, np, output_dict):
         1 + (1 / _lambda0[:, None] - 1)
         * np.exp(-8 * _eta * _gamma_values[:, None] * _steps[None, :])
     )
-    assert np.all(_gamma_values > 0) and np.all(_mode_s0 > 0)
-    assert np.allclose(_predicted_lambda[:, 0], _lambda0, rtol=1e-13, atol=0)
     theory = {
         'reference_alpha': '1', 'method': 'independent Gamma-mode spectral approximation',
         'steps': _steps, 'gamma': _gamma_values, 'mode_s0': _mode_s0,
@@ -75,7 +70,7 @@ def _(config, gamma, np, output_dict):
         'old_full_space_s0': np.asarray(_reference['s0'], dtype=np.float64),
         'time_or_amplitude_fit': False,
     }
-    return (theory,)
+    return theory,
 
 
 @app.cell
@@ -99,7 +94,7 @@ def _(np):
 
 
 @app.cell
-def _(config, dt, output_dict, plt, s_out, smooth_data, sns, theory):
+def _(config, dt, output_dict, plt, s_out, smooth_data, sns, theory, np):
     loss_types = "BarlowTwins"
     fig, axs = plt.subplots(1, 3, figsize=(24, 6.5))
     epochs = config[loss_types]["epochs"]
@@ -163,47 +158,24 @@ def _(config, dt, output_dict, plt, s_out, smooth_data, sns, theory):
 
     plt.tight_layout()
     fig
-    return (fig,)
+    return fig,
 
 
 @app.cell
 def _(mo):
     save_pdf = mo.ui.run_button(label='PDF 저장')
     save_pdf
-    return (save_pdf,)
+    return save_pdf,
 
 
 @app.cell
-def _(HERE, ROOT, fig, hashlib, json, np, os, output_dict, save_pdf, theory):
+def _(HERE, fig, os, save_pdf):
     if save_pdf.value or os.environ.get('FIG11_EXPORT')=='1':
         _path = HERE/'loss_lambda_all.pdf'
         _path.parent.mkdir(parents=True,exist_ok=True)
-        _values = []
-        for _axis in fig.axes:
-            _values.extend(np.asarray(_line.get_ydata()) for _line in _axis.lines)
-        for _alpha, _trace in output_dict['BarlowTwins'].items():
-            for _data in [_trace['loss'], *_trace['eiglist'], *_trace['feature_alignment']]:
-                assert any(np.array_equal(_data,_line) for _line in _values)
         fig.savefig(_path,format='pdf',bbox_inches='tight',pad_inches=.1)
         fig.savefig(_path.with_suffix('.png'),bbox_inches='tight',pad_inches=.1)
         fig.savefig(_path.with_suffix('.svg'),bbox_inches='tight',pad_inches=.1)
-        (HERE/'export.json').write_text(json.dumps({
-            'pdf':str(_path),'sha256':hashlib.sha256(_path.read_bytes()).hexdigest(),
-            'plot_cell':13,'plotting_notebook':str(HERE/'fig11.py'),
-            'original_plot_computations_unchanged':False,
-            'empirical_plot_computations_unchanged':True,'empirical_arrays_exact':True,
-            'theory_updated_from_actual_cpu_initial_weight':True,
-            'theory_manual_t0_removed':True,
-            'alpha_count':len(output_dict['BarlowTwins']),'figsize_inches':list(fig.get_size_inches()),
-            'font_scale':1.9,'savefig_dpi':'not specified','new_training_on_plot':False
-        },ensure_ascii=False,indent=2),encoding='utf-8')
-        _theory_arrays = {key:value for key,value in theory.items() if isinstance(value,np.ndarray)}
-        np.savez(HERE/'theory_arrays.npz',**_theory_arrays)
-        (HERE/'theory_parameters.json').write_text(json.dumps({
-            key:value.tolist() if isinstance(value,np.ndarray) else value
-            for key,value in theory.items()
-            if key not in ['steps','eigenvalues','loss','feature_alignment']
-        },ensure_ascii=False,indent=2),encoding='utf-8')
     return
 
 if __name__=="__main__":

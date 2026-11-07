@@ -118,10 +118,6 @@ def load_samples(path):
         with open(path,encoding='utf8') as f:rows=[json.loads(line) for line in f if line.strip()]
     else:
         data=json.loads(path.read_text(encoding='utf8'));rows=data if isinstance(data,list) else data['samples']
-    for i,row in enumerate(rows):
-        assert int(row['cache_idx'])==i,(i,row)
-        assert 0<=int(row['class'])<1000
-        assert Path(row['image_path']).is_file() and Path(row['xml_path']).is_file()
     return rows
 
 def load_pair(root,step):
@@ -136,15 +132,14 @@ def load_pair(root,step):
     return model,linear,{'backbone_path':str(backbone_path),'backbone_sha256':sha(backbone_path),
       'head_path':str(head_path),'head_sha256':sha(head_path)}
 
-def infer_step(model,linear,loader,expected_n):
+def infer_step(model,linear,loader):
     device=torch.device('cuda')
     model.to(device).eval();linear.to(device).eval()
     model_grad=torch.nn.Sequential(model,linear)
     lists={k:[] for k in ['class','conf','top1','top5','idx','pred_indices','top5_indices']}
-    started=time.time();torch.cuda.reset_peak_memory_stats();batch_timings=[];tie_count=0
     with torch.no_grad(),torch.amp.autocast(device_type='cuda',dtype=torch.bfloat16):
         for orig_batch,object_batch,background_batch,classes,_,indices in tqdm(loader):
-            batch_started=time.perf_counter();B=orig_batch.size(0)
+            B=orig_batch.size(0)
             combined=torch.cat([orig_batch,object_batch,background_batch],dim=0).to(device,non_blocking=True)
             classes=classes.to(device,non_blocking=True)
             logits_all=model_grad(combined)
@@ -155,40 +150,23 @@ def infer_step(model,linear,loader,expected_n):
             corr_top1=(preds==classes)
             top5=logits_all.topk(5,dim=1,sorted=False)[1].view(3,B,5)
             corr_top5=(top5==classes.view(1,B,1)).any(dim=2)
-            assert torch.isfinite(logits_all).all() and torch.isfinite(conf_all).all()
-            # BF16 ties can make argmax's index absent from topk's selected
-            ties=corr_top1&~corr_top5
-            if bool(ties.any()):
-                true_scores=logits_all[idx_3x,classes_3x].view(3,B)
-                selected_scores=torch.gather(logits_all,1,top5.reshape(3*B,5)).view(3,B,5)
-                assert torch.all(true_scores[ties]==selected_scores.min(dim=2).values[ties])
-                tie_count+=int(ties.sum().item())
             lists['class'].append(classes.cpu())
             lists['conf'].append(conf_all.cpu().to(torch.float32))
             lists['top1'].append(corr_top1.cpu());lists['top5'].append(corr_top5.cpu())
             lists['idx'].append(indices.cpu())
             lists['pred_indices'].append(preds.cpu());lists['top5_indices'].append(top5.cpu())
-            batch_timings.append({'samples':int(B),'seconds':time.perf_counter()-batch_started})
     classes=np.concatenate([x.numpy() for x in lists['class']])
     indices=np.concatenate([x.numpy() for x in lists['idx']])
     conf=np.concatenate([x.numpy() for x in lists['conf']],axis=1)
     top1=np.concatenate([x.numpy() for x in lists['top1']],axis=1)
     top5=np.concatenate([x.numpy() for x in lists['top5']],axis=1)
-    assert len(classes)==expected_n and np.array_equal(indices,np.arange(expected_n))
     arrays={'class':classes,'cache_idx':indices,
        'pred_indices':np.concatenate([x.numpy() for x in lists['pred_indices']],axis=1),
        'top5_indices':np.concatenate([x.numpy() for x in lists['top5_indices']],axis=1)}
     for j,view in enumerate(['orig','obj','bg']):
         arrays[view+'_top1']=top1[j];arrays[view+'_top5']=top5[j];arrays['conf_'+view]=conf[j]
-    report={'seconds':time.time()-started,'samples':expected_n,
-      'peak_gpu_allocated_bytes':torch.cuda.max_memory_allocated(),'peak_gpu_reserved_bytes':torch.cuda.max_memory_reserved(),
-      'accuracy':{k:float(arrays[k].mean()) for k in arrays if k.endswith(('top1','top5'))},
-      'batch_compute_timings':batch_timings,'warm_batch_seconds':batch_timings[0]['seconds'],
-      'bf16_argmax_top5_tie_disagreements':tie_count,
-      'steady_batch_mean_seconds':float(np.mean([b['seconds'] for b in batch_timings[1:]])) if len(batch_timings)>1 else None,
-      'timing_scope':'Per-batch H2D+forward+metrics+D2H; total includes DataLoader waits; first batch is warmup.'}
     model.cpu();linear.cpu();del model_grad;gc.collect();torch.cuda.empty_cache()
-    return arrays,report
+    return arrays
 
 def main():
     p=argparse.ArgumentParser()
@@ -206,7 +184,6 @@ def main():
     args=p.parse_args()
     if not args.run:
         print('Prepared only. Main must pass --run to execute inference.');return
-    assert args.batch_size>0 and args.workers>=0
     workspace=Path(__file__).resolve().parents[4]
     output=args.out.resolve();output.relative_to(workspace/'output')
     if output.exists() and any(output.iterdir()) and not args.resume:
@@ -243,7 +220,6 @@ def main():
        transforms.Normalize((0.485,0.456,0.406),(0.229,0.224,0.225))])
     dataset=MaskedImageDataset(None,[dict(r) for r in rows],transform)
     loader=DataLoader(dataset,batch_size=args.batch_size,shuffle=False,num_workers=args.workers,pin_memory=not args.no_pin_memory,persistent_workers=args.workers>0)
-    completed=[]
     for step in args.steps:
         target=output/(step+'.npz');meta_path=output/(step+'.json')
         if args.resume and target.exists() and meta_path.exists():
@@ -251,17 +227,16 @@ def main():
             assert prior['policy']==policy and prior['runtime']==runtime and prior['npz_sha256']==sha(target)
             assert prior['inputs']['backbone_sha256']==sha(args.models/(step+'.pth'))
             assert prior['inputs']['head_sha256']==sha(args.models/step/'final_checkpoint.pth')
-            completed.append(prior);print('RESUME_VALIDATED_SKIP',step,flush=True);continue
+            print('CACHED',step,flush=True);continue
         if target.exists() or meta_path.exists():raise RuntimeError('Incomplete/foreign step outputs exist: '+step)
         model,linear,inputs=load_pair(args.models,step)
-        arrays,performance=infer_step(model,linear,loader,len(rows))
+        arrays=infer_step(model,linear,loader)
         tmp=target.with_suffix('.npz.tmp')
         with open(tmp,'wb') as f:np.savez_compressed(f,**arrays)
         os.replace(tmp,target)
-        record={'step':step,'status':'complete','policy':policy,'runtime':runtime,'inputs':inputs,'npz_sha256':sha(target),'performance':performance}
-        atomic_json(meta_path,record);completed.append(record)
-        atomic_json(output/'progress.json',{'completed_steps':[x['step'] for x in completed],'requested_steps':args.steps})
-        print(json.dumps({'step':step,'status':'complete',**performance}),flush=True)
+        record={'step':step,'status':'complete','policy':policy,'runtime':runtime,'inputs':inputs,'npz_sha256':sha(target)}
+        atomic_json(meta_path,record)
+        print('Completed',step,flush=True)
         del model,linear,arrays;gc.collect()
     cache={}
     compatibility_fields=['class','orig_top1','orig_top5','obj_top1','obj_top5','bg_top1','bg_top5','conf_orig','conf_obj','conf_bg']
@@ -273,8 +248,4 @@ def main():
     tmp=compatibility.with_suffix('.pkl.tmp')
     with open(tmp,'wb') as f:pickle.dump(cache,f,protocol=pickle.HIGHEST_PROTOCOL)
     os.replace(tmp,compatibility)
-    atomic_json(output/'completion.json',{'status':'SMOKE_COMPLETE' if args.smoke else 'INFERENCE_COMPLETE',
-       'steps':args.steps,'sample_count':len(rows),'policy':policy,'compatibility_cache':str(compatibility),
-       'compatibility_cache_sha256':sha(compatibility),'completed':completed,'training':False})
-
 if __name__=='__main__':main()

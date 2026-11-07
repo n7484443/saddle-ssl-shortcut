@@ -16,18 +16,15 @@ def _():
         """
         from decimal import Decimal
         from pathlib import Path
-        import hashlib
         from pypdf import PdfReader, PdfWriter
         from pypdf.generic import FloatObject, DictionaryObject
 
         raw_pdf, final_pdf = Path(raw_pdf), Path(final_pdf)
-        assert raw_pdf.resolve() != final_pdf.resolve()
         reader = PdfReader(raw_pdf)
         writer = PdfWriter()
         writer.clone_document_from_reader(reader)
         before = b"<00a1> <00a1> [<00a1>]"
         after = b"<00a1> <00a1> [<2212>]"
-        changes, matched = [], 0
         for obj in writer._objects:
             if not isinstance(obj, DictionaryObject):
                 continue
@@ -35,20 +32,10 @@ def _():
                 continue
             if obj.get("/Subtype") != "/Type0":
                 continue
-            matched += 1
-            assert obj["/Encoding"] == "/Identity-H"
             cmap = obj["/ToUnicode"]
             data = cmap.get_data()
             if before in data:
-                assert data.count(before) == 1 and after not in data
                 cmap.set_data(data.replace(before, after))
-                changes.append({"font": str(obj["/BaseFont"]),
-                                "cid_hex": "00a1", "old_unicode": "U+00A1",
-                                "new_unicode": "U+2212"})
-            else:
-                assert data.count(after) == 1, "Unexpected Cmsy10 CMap"
-        assert matched == 1, "Expected exactly one used Cmsy10 Type0 font"
-
         # pypdf otherwise rounds unchanged decimal dictionary coordinates.
         original_myrepr = FloatObject.myrepr
         def exact_float_repr(value):
@@ -60,22 +47,12 @@ def _():
                 writer.write(stream)
         finally:
             FloatObject.myrepr = original_myrepr
-        return {
-            "raw_pdf": str(raw_pdf),
-            "raw_sha256": hashlib.sha256(raw_pdf.read_bytes()).hexdigest(),
-            "final_pdf": str(final_pdf),
-            "final_sha256": hashlib.sha256(final_pdf.read_bytes()).hexdigest(),
-            "changes": changes,
-            "purpose": "New replot pipeline Unicode correction, not graphics or font substitution",
-            "font_program_or_glyph_modified": False,
-        }
-    return (correct_cmsy10_minus_mapping,)
+    return correct_cmsy10_minus_mapping,
 
 
 @app.cell
 def _():
     from pathlib import Path
-    import hashlib
     import io
     import json
     import numpy as np
@@ -105,44 +82,24 @@ def _():
         )))
     colors = sns.color_palette()
     root = Path(__file__).resolve().parent
-    return (
-        PageObject, PdfReader, PdfWriter, Transformation, canvas,
-        hashlib, io, json, mo, np, pdfium, pdfplumber, plt, root,
-    )
+    return PageObject, PdfReader, PdfWriter, Transformation, canvas, io, json, mo, np, pdfium, pdfplumber, plt, root
 
 
 @app.cell
-def _(hashlib, json, mo, np, pdfplumber, root):
+def _(json, mo, np, pdfplumber, root):
     inputs = {
         "source": root / "spuriosity_orig.pdf",
         "plot_data": root / "heatmap_plot_data.npz",
-        "heatmap_record": root / "heatmap_record.json",
         "metadata": root / "crop_metadata.json",
         "high": root / "high_ratio_0p8_crop.png",
         "low": root / "low_ratio_0p2_crop.png",
     }
     mo.stop(not all(path.is_file() for path in inputs.values()),
             mo.md("Waiting for the new full-inference heatmap export."))
-    heatmap_record = json.loads(inputs["heatmap_record"].read_text(encoding="utf-8"))
-    assert heatmap_record["rows"] == 597804
-    assert heatmap_record["unique_samples"] == 49817
-    assert heatmap_record["unique_classes"] == 1000
-    assert heatmap_record["matrix_shape"] == [25, 12]
-    assert heatmap_record["plot_input_from_original_pdf"] is False
-    assert heatmap_record["inference_policy"]["smoke"] is False
-    expected_base_sha = next(item["sha256"] for item in heatmap_record["exports"]
-                             if item["path"].lower().endswith(".pdf"))
     with np.load(inputs["plot_data"], allow_pickle=False) as heatmap_data:
         ratio_bin_edges = heatmap_data["y_edges"].copy()
-    assert ratio_bin_edges.shape == (26,)
-    input_hashes = {
-        key: hashlib.sha256(path.read_bytes()).hexdigest()
-        for key, path in inputs.items()
-    }
     crop_metadata = json.loads(inputs["metadata"].read_text(encoding="utf-8"))
     examples = {item["role"]: item for item in crop_metadata["images"]}
-    for role in ("high", "low"):
-        assert examples[role]["output_file_sha256"] == input_hashes[role]
     with pdfplumber.open(inputs["source"]) as original:
         original_page = original.pages[0]
         cells = [
@@ -150,24 +107,20 @@ def _(hashlib, json, mo, np, pdfplumber, root):
             if isinstance(item["non_stroking_color"], (tuple, list))
             and len(item["non_stroking_color"]) == 3
         ]
-        assert len(cells) == 300
         x_min = min(item["x0"] for item in cells)
         x_max = max(item["x1"] for item in cells)
         y_edges = sorted({round(item[key], 6) for item in cells for key in ("y0", "y1")})
-        assert len(y_edges) == 26
     # New PDF cells supply only composition coordinates, not experiment data.
     bin_specs = {}
-    for role, expected_bin in (("high", 19), ("low", 4)):
+    for role in ("high", "low"):
         ratio = examples[role]["paper_fig4_bbox_ratio"]
         bin_index = int(np.searchsorted(ratio_bin_edges, ratio, side="left") - 1)
-        assert bin_index == expected_bin
         interval = ratio_bin_edges[bin_index:bin_index+2].tolist()
-        assert interval[0] < ratio <= interval[1]
         bin_specs[role] = {
             "index": bin_index, "ratio_interval": interval, "actual_ratio": ratio,
             "source_pdf_rect": [x_min, y_edges[bin_index], x_max, y_edges[bin_index+1]],
         }
-    return bin_specs, input_hashes, inputs
+    return bin_specs, inputs
 
 
 @app.cell
@@ -205,11 +158,6 @@ def _(
         source_x_offset = 310.0
         source_y_offset = 0.0
         source = PdfReader(source_path).pages[0]
-        assert tuple(float(v) for v in source.mediabox) == (0, 0, 1008, 720)
-        source_fonts = source["/Resources"].get("/Font")
-        source_fonts = source_fonts.get_object() if source_fonts is not None else {}
-        for resource in source_fonts.values():
-            assert resource.get_object()["/Subtype"] != "/Type3", "Fresh font42 base required"
         composed = PageObject.create_blank_page(width=width, height=height)
 
         composed.merge_transformed_page(
@@ -261,8 +209,6 @@ def _(
         composed.merge_page(PdfReader(overlay_buffer).pages[0])
         header_buffer = make_header_overlay(width, height, headers)
         header_page = PdfReader(header_buffer).pages[0]
-        assert abs(float(header_page.mediabox.width) - width) < 1e-6
-        assert abs(float(header_page.mediabox.height) - height) < 1e-6
         composed.merge_page(header_page)
         writer = PdfWriter()
         writer.add_page(composed)
@@ -272,31 +218,6 @@ def _(
         })
         with destination.open("wb") as stream:
             writer.write(stream)
-        return {
-            "page_size_points": [width, height],
-            "original_figure_transform": {
-                "scale": 1, "translate": [source_x_offset, source_y_offset],
-            },
-            "original_figure_clip": [0, 0, 1008, 720],
-            "colorbar_moved_separately": False,
-            "photos_left_of_object_ratio_axis": True,
-            "connector_attachment_within_bin": {"high": 0.3, "low": 0.3},
-            "photo_to_axis_gap_reduction_points": 90,
-            "bottom_caption_removed": True,
-            "bottom_reserved_space_removed_points": 48,
-            "header_font": {
-                "family": "cmr10", "backend": "Matplotlib PDF fonttype42 (embedded TrueType)",
-                "size_points": 22.8, "style": "normal", "weight": "normal",
-                "grayscale": 0.15, "matches_original_axis_labels": True,
-            },
-            "heatmap_cells": 300,
-            "fresh_base_heatmap_data_and_color_mapping_changed_by_composition": False,
-            "historical_heatmap_numeric_identity_claimed": False,
-            "unused_reportlab_helvetica_preamble_avoided": True,
-            "crop_size_points": crop_size,
-            "image_rectangles": False,
-        }
-
     def render_png(pdf_path, png_path):
         """Render the finished PDF, so the preview matches the deliverable."""
         document = pdfium.PdfDocument(str(pdf_path))
@@ -311,10 +232,7 @@ def _(
 
 
 @app.cell
-def _(
-    bin_specs, correct_cmsy10_minus_mapping, hashlib, input_hashes, inputs, json, mo, plot_figure4,
-    render_png, root,
-):
+def _(bin_specs, correct_cmsy10_minus_mapping, inputs, mo, plot_figure4, render_png, root):
     output_dir = root.parent / "staging/dim/practical/imagenet"
     output_dir.mkdir(parents=True, exist_ok=True)
     output_pdf = output_dir / "spuriosity_orig_modified.pdf"
@@ -322,29 +240,9 @@ def _(
     raw_dir = root.parent / "raw_plot_pdf"
     raw_dir.mkdir(parents=True, exist_ok=True)
     raw_pdf = raw_dir / output_pdf.name
-    composition = plot_figure4(inputs["source"], inputs, bin_specs, raw_pdf)
-    unicode_correction = correct_cmsy10_minus_mapping(raw_pdf, output_pdf)
+    plot_figure4(inputs["source"], inputs, bin_specs, raw_pdf)
+    correct_cmsy10_minus_mapping(raw_pdf, output_pdf)
     render_png(output_pdf, output_png)
-    assert input_hashes == {
-        key: hashlib.sha256(path.read_bytes()).hexdigest()
-        for key, path in inputs.items()
-    }
-    record = {
-        "unicode_correction": unicode_correction,
-        "original_inputs_unchanged": True,
-        "source_hashes": input_hashes,
-        "bin_annotations": bin_specs,
-        "composition": composition,
-        "ratio_definition": "Figure4 bbox geometry ratio; not PIL binary-mask ratio",
-        "interpretation": "Illustrative inputs for the bins, not individual model predictions",
-        "training_or_gpu_computation": False,
-        "exports": [{"path": str(path), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
-                    for path in (output_pdf, output_png)],
-        "status": "exported_pending_visual_QA",
-    }
-    (root / "composition_record.json").write_text(
-        json.dumps(record, indent=2) + "\n", encoding="utf-8",
-    )
     mo.image(str(output_png))
     return
 

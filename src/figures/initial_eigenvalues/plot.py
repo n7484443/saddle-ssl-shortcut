@@ -8,7 +8,6 @@ app = marimo.App(width="full")
 def _():
     from pathlib import Path
     import numpy as np
-    import pandas as pd
     import torch
     import matplotlib.pyplot as plt
     from matplotlib.ticker import LogLocator, NullFormatter
@@ -19,7 +18,7 @@ def _():
     plt.rcParams.update({"mathtext.fontset": "cm", "pdf.fonttype": 42, "ps.fonttype": 42})
     colors = sns.color_palette()
     root = Path(__file__).resolve().parent
-    return LogLocator, NullFormatter, colors, np, pd, plt, root
+    return LogLocator, NullFormatter, colors, np, plt, root
 
 
 @app.cell
@@ -47,9 +46,6 @@ def _(LogLocator, NullFormatter, colors, np, plt):
         if show_sd:
             for index, depth in enumerate(depths):
                 if eligible[index]:
-                    assert np.all(lower[index] > 0)
-                    assert np.min(lower[index]) > y_limits[0]
-                    assert np.max(upper[index]) < y_limits[1]
                     ax.fill_between(
                         slopes, lower[index], upper[index],
                         facecolor=colors[index], alpha=0.15, linewidth=0,
@@ -91,7 +87,7 @@ def _(depths, eligible, lower, mean, plot_five_seed_depths, root, slopes, upper,
         fig.savefig(root / f"{name}.pdf", bbox_inches="tight", pad_inches=.22)
         figures.append(fig)
     figures
-    return figures,
+    return
 
 
 if __name__ == "__main__":

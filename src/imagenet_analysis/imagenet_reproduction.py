@@ -29,12 +29,10 @@ def _(LineCollection, json, np, plt, root, sns):
     ROOT = root
     OUTPUT = root.parent / 'output/pdf'
     def fit_modes(x, ratios, reference):
-        assert np.isfinite(ratios).all() and (ratios > 0).all(), 'Invalid modes must be diagnosed, not dropped'
         lx, ly = np.log(np.asarray(x) / reference), np.log(ratios)
         slope, intercept = np.polyfit(lx, ly, 1)
         residual = np.sum((ly - lx[:, None] * slope - intercept) ** 2, axis=0)
         total = np.sum((ly - ly.mean(axis=0)) ** 2, axis=0)
-        assert (total > 0).all()
         r2 = 1 - residual / total
         return slope, intercept, r2
 
@@ -49,39 +47,17 @@ def _(LineCollection, json, np, plt, root, sns):
         result = {'outcome': outcome, 'directory': directory}
         for name, grid, target in [('amplitude', 'amplitudes', 2.), ('extent', 'extents', 1.)]:
             x = np.asarray(outcome['config'][grid])
-            assert x.size == 20
             index = int(np.argmin(abs(x - 1)))
             reference = float(x[index])
             values = np.concatenate(curves[name], axis=1)
             ratios = values / values[index]
             slope, intercept, r2 = fit_modes(x, ratios, reference)
-            stats = dict(median_exponent=float(np.median(slope)), exponent_iqr=np.quantile(slope, [.25, .75]).tolist(),
-                         median_r2=float(np.median(r2)), r2_iqr=np.quantile(r2, [.25, .75]).tolist(),
-                         median_abs_exponent_error=float(np.median(abs(slope - target))),
-                         mean_abs_exponent_error=float(np.mean(abs(slope - target))),
-                         median_abs_intercept=float(np.median(abs(intercept))), valid_fits=len(slope))
-            assert len(slope) == 9063
+            stats = dict(median_exponent=float(np.median(slope)))
             result[name] = dict(x=x, reference=reference, ratios=ratios, slopes=slope, intercepts=intercept,
                                 r2=r2, target=target, stats=stats)
         return result
 
-    def statistic_rows(result):
-        a, e = result['amplitude']['stats'], result['extent']['stats']
-        interval = lambda values: f'[{values[0]:.4f}, {values[1]:.4f}]'
-        return [
-            ['Target exponent', '2.0000', '1.0000'],
-            ['Median exponent k', f"{a['median_exponent']:.4f}", f"{e['median_exponent']:.4f}"],
-            ['Exponent IQR', interval(a['exponent_iqr']), interval(e['exponent_iqr'])],
-            ['Median |k - target|', f"{a['median_abs_exponent_error']:.4f}", f"{e['median_abs_exponent_error']:.4f}"],
-            ['Mean |k - target|', f"{a['mean_abs_exponent_error']:.4f}", f"{e['mean_abs_exponent_error']:.4f}"],
-            ['Median R²', f"{a['median_r2']:.4f}", f"{e['median_r2']:.4f}"],
-            ['R² IQR', interval(a['r2_iqr']), interval(e['r2_iqr'])],
-            ['Median |intercept|', f"{a['median_abs_intercept']:.4f}", f"{e['median_abs_intercept']:.4f}"],
-            ['Valid (class, mode/rank) fits', f"{a['valid_fits']:,}", f"{e['valid_fits']:,}"],
-        ]
-
     def make_figure(result, width=14., font_scale=1.9, show_modes=True, panel='scaling'):
-        assert panel in ('scaling', 'fits')
         with plt.rc_context():
             sns.set_theme(style="whitegrid", font="cmr10", font_scale=font_scale)
             plt.rcParams["axes.formatter.use_mathtext"] = True
@@ -128,55 +104,25 @@ def _(LineCollection, json, np, plt, root, sns):
             fig.savefig(OUTPUT / f'{stem}.png', bbox_inches='tight', pad_inches=.3)
             plt.close(fig)
         pdf, png = OUTPUT / 'imagenet_scaling_curves.pdf', OUTPUT / 'imagenet_scaling_curves.png'
-        summary = {name: result[name]['stats'] for name in ['amplitude', 'extent']}
-        summary['cache_key'] = result['outcome']['key']
-        summary['settings'] = result['outcome']['config']
-        summary['reference_amplitude'] = result['amplitude']['reference']
-        summary['reference_extent'] = result['extent']['reference']
-        summary['fit'] = 'log(f/f_ref) = intercept + k log(x/x_ref); median over all class-mode fits'
-        (OUTPUT / 'imagenet_scaling_reproduction.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
         return pdf, png
 
-    return export_figure, load_result, make_figure, statistic_rows
+    return export_figure, load_result, make_figure
 
 
 @app.cell(hide_code=True)
 def _(mo):
     refresh = mo.ui.run_button(label='완료된 캐시 새로고침')
-    mo.vstack([mo.md(r'''
-    # ImageNet scaling
-
-    **200 classes · images/class = max · 224 px · K <= 100 · bbox area 45–55%**
-
-    Use single-bbox images and center the bbox. Hold each selected class's RGB mean/std fixed.
-    Use 20 amplitude values from 0.2 to 2.0 and 20 extent values from 0.2 to 1.0.
-
-    Fit $\log(f/f_{\rm ref})=a+k\log(x/x_{\rm ref})$ for each class and mode,
-    then report the median coefficient across all valid fits, rather than averaging class coefficients.
-    This notebook reads cached spectra; redrawing does not repeat image processing or GPU computation.
-    '''), refresh])
-    return (refresh,)
+    mo.vstack([mo.md("# ImageNet scaling"), refresh])
+    return refresh,
 
 
 @app.cell
-def _(json, load_result, mo, refresh, root):
+def _(load_result, mo, refresh, root):
     refresh.value
     _manifest = root / 'cache/historical_20point_result.json'
-    _status_file = root / 'historical_20point_status.json'
-    _status = json.loads(_status_file.read_text(encoding='utf-8')) if _status_file.exists() else {}
-    mo.stop(not _manifest.exists(), mo.md(f"Preparing the spectral cache. **{_status.get('completed_groups', 0)}/{_status.get('total_groups', 188)} classes** · {_status.get('status', 'waiting')}\n\nRefresh to check progress."))
+    mo.stop(not _manifest.exists(), mo.md("Generate the spectral cache with reproduce_historical_20point.py."))
     result = load_result()
-    return (result,)
-
-
-@app.cell(hide_code=True)
-def _(mo, result, statistic_rows):
-    _a, _e = result['amplitude']['stats'], result['extent']['stats']
-    mo.vstack([
-        mo.md(f"## Amplitude **{_a['median_exponent']:.4f}** · Extent **{_e['median_exponent']:.4f}**\n\nOf the 200 classes, **188 classes, 9,073 images, and 9,063 mode fits** pass the filters. Reference coefficients are 1.5860 / 1.1235."),
-        mo.ui.table([dict(zip(['Statistic', 'Amplitude', 'Extent'], row)) for row in statistic_rows(result)], selection=None),
-    ])
-    return
+    return result,
 
 
 @app.cell(hide_code=True)

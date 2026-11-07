@@ -1,8 +1,4 @@
-"""Unattended train-subset preparation and bounded, source-based scaling study.
-
-Waits for the independently verified train download. Never unpacks the full
-training dataset. Keeps all outcomes rather than selecting for rebuttal numbers.
-"""
+"""Prepare the ImageNet subset and cache per-class spectra."""
 from __future__ import annotations
 
 import ast
@@ -25,25 +21,10 @@ import numpy as np
 import scaling_cache as sc
 
 ROOT = Path(__file__).resolve().parent
-STATUS = ROOT / "train_scaling_status.json"
 BOX_ARCHIVE = ROOT / "bbox/ILSVRC2012_bbox_train_v2.tar.gz"
 TRAIN_ARCHIVE = ROOT / "ILSVRC2012_img_train.tar"
 CATALOG = ROOT / "cache/train_bbox_catalog.json"
 RECORDS = ROOT / "cache/train_records.json"
-STATE = dict(pid=os.getpid(), status="starting")
-STUDY = [
-    dict(name="train_45_55_classnorm", area=[.45, .55], normalization="class_empirical"),
-    dict(name="train_40_60_classnorm", area=[.4, .6], normalization="class_empirical"),
-    dict(name="train_45_55_globalnorm", area=[.45, .55], normalization="global_empirical"),
-    dict(name="train_40_60_globalnorm", area=[.4, .6], normalization="global_empirical"),
-]
-
-
-def status(**updates):
-    STATE.update(updates, updated_at=time.strftime("%Y-%m-%dT%H:%M:%S%z"))
-    sc.write_json(STATUS, STATE)
-
-
 def catalog():
     checksum = hashlib.md5(BOX_ARCHIVE.read_bytes()).hexdigest()
     if checksum != "9271167e2176350e65cfe4e546f14b17":
@@ -52,7 +33,6 @@ def catalog():
         saved = json.loads(CATALOG.read_text(encoding="utf-8"))
         if saved["bbox_md5"] == checksum and saved["class_limit"] == 200:
             return saved
-    status(status="cataloging_bbox")
     class_counts = {}
     with tarfile.open(BOX_ARCHIVE, "r|gz") as tar:
         for member in tar:
@@ -92,12 +72,10 @@ def catalog():
 
 
 def wait_for_download():
-    status(status="waiting_for_verified_download")
     while True:
         p = ROOT / "train_download_status.json"
         current = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
         phase = current.get("status", "not_started")
-        status(download_status=phase, download_percent=current.get("percent"))
         if phase == "complete":
             if current.get("actual_md5") != "1d675b47d978889d74fa0da5fadfb00e":
                 raise ValueError("Download completion lacks the expected MD5 verification")
@@ -122,7 +100,6 @@ def extract_annotated_subset(cat):
         if old.get("signature") == signature and all((root / cls / name).exists() for cls, names in wanted.items() for name in names):
             print("Annotated train subset already extracted.", flush=True)
             return
-    status(status="extracting_annotated_train_subset")
     missing, count = [], 0
     with tarfile.open(TRAIN_ARCHIVE, "r:") as outer:
         outer_members = {PurePosixPath(m.name).stem: m for m in outer if m.isfile()}
@@ -154,7 +131,6 @@ def extract_annotated_subset(cat):
             missing.extend(f"{cls}/{name}" for name in sorted(wanted[cls] - found))
             if ci % 10 == 0:
                 print(f"Extracted {ci}/200 classes, {count:,} annotated images.", flush=True)
-                status(extracted_classes=ci, extracted_images=count)
     sc.write_json(marker, dict(signature=signature, extracted_images=count, missing_images=missing))
     if missing:
         raise ValueError(f"{len(missing)} bbox image IDs were not in the train archive; inspect extraction manifest")
@@ -173,7 +149,6 @@ def scan_train(cat):
         if old["identity"] == identity:
             return old
     from PIL import Image
-    status(status="scanning_train_geometry")
     records, errors, mismatched_sizes = [], [], []
     for i, row in enumerate(cat["records"], 1):
         path = ROOT / "train" / row["class_id"] / (row["stem"] + ".JPEG")
@@ -200,7 +175,6 @@ def scan_train(cat):
             errors.append(dict(stem=row["stem"], error=str(exc)))
         if i % 10000 == 0:
             print(f"Train geometry {i:,}/{len(cat['records']):,}", flush=True)
-            status(scanned_images=i, total_images=len(cat["records"]))
     result = dict(identity=identity, records=records, image_read_errors=errors,
                   xml_image_dimension_mismatches=mismatched_sizes)
     sc.write_json(RECORDS, result)
@@ -229,7 +203,6 @@ def global_stats(groups, data_identity):
             batch = torch.stack(images).double()
             sums += batch.sum((0, 2, 3)); squares += (batch*batch).sum((0, 2, 3))
             pixels += batch.shape[0]*224*224
-        if ci % 20 == 0: status(normalization_classes=ci)
     mean = sums / pixels
     std = (squares / pixels - mean.square()).clamp_min(1e-12).sqrt()
     mean, std = mean.float().view(3, 1, 1), std.float().view(3, 1, 1)
@@ -279,19 +252,17 @@ def global_kernel(config, fixed_stats):
 
 
 def compute_run(config, data, name):
-    groups, audit = sc.select_groups(data["records"], config)
+    groups = sc.select_groups(data["records"], config)
     protocol = dict(config=config, dataset=data["identity"],
                     original_kernel_sha256=hashlib.sha256(sc.SOURCE.read_bytes()).hexdigest(),
                     pipeline_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
                     adapter_sha256=hashlib.sha256(Path(sc.__file__).read_bytes()).hexdigest(),
                     class_selection="first 200 sorted bbox classes before area filtering",
                     image_order="sorted filename before deterministic seed-0 subsampling",
-                    audit=audit, selected_images={c: [r["stem"] for r in rs] for c, rs in groups.items()})
+                    selected_images={c: [r["stem"] for r in rs] for c, rs in groups.items()})
     key = sc.digest(protocol)
     directory = ROOT / "cache/train_runs" / key
     sc.write_json(directory / "protocol.json", protocol)
-    status(status="computing_train_scaling", run_name=name, run_key=key,
-           total_groups=len(groups), completed_groups=0)
     results, compute, hits = {}, None, 0
     for index, (cls, rows) in enumerate(groups.items(), 1):
         path = directory / f"{cls}.npz"
@@ -313,50 +284,10 @@ def compute_run(config, data, name):
         results[cls] = result
         if index % 10 == 0 or index == len(groups):
             print(f"{name}: {index}/{len(groups)} classes, {hits} cached", flush=True)
-            status(completed_groups=index, cache_hits=hits)
-    summary, curves = sc.summarize(results, config)
-    truncated = {c: {k: a[:, :20] for k, a in rs.items()} for c, rs in results.items()}
-    summary_k20, _ = sc.summarize(truncated, config)
-    outcome = dict(name=name, key=key, config=config, audit=audit, summary=summary,
-                   derived_top20_summary=summary_k20,
-                   mode_counts={c: int(v["f_alpha"].shape[1]) for c, v in results.items()},
-                   data_errors=data["image_read_errors"])
-    sc.write_json(directory / "summary.json", outcome)
-    result = dict(key=key, directory=directory, config=config, audit=audit, summary=summary, curves=curves)
-    import matplotlib
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-    from matplotlib.ticker import NullFormatter, ScalarFormatter
-    figure = sc.plot_result(result)
-    for axis, ticks in zip(figure.axes, ([.2, .5, 1, 2], [.2, .5, 1])):
-        axis.set_xticks(ticks); axis.xaxis.set_major_formatter(ScalarFormatter())
-        axis.xaxis.set_minor_formatter(NullFormatter())
-    figure.suptitle(f"TRAIN · area {config['area']} · {config['normalization']} · {len(groups)} classes")
-    figure.tight_layout()
-    for ext in ("png", "pdf"): figure.savefig(directory / f"scaling.{ext}")
-    plt.close(figure)
-    return outcome
-
-
-def write_report(outcomes):
-    lines = ["# ImageNet train scaling — source-based condition comparison", "",
-             "All predeclared configurations are reported. A close coefficient is not proof that it was the historical run.", "",
-             "Top K is capped by each group's sample count. No class is filtered based on its measured exponent.", "",
-             "| Run | Classes | Images | K | Mean class-median-curve amplitude / extent | Median of all mode exponents amplitude / extent |", 
-             "|---|---:|---:|---:|---|---|"]
-    for r in outcomes:
-        for k, key in [(100, "summary"), (20, "derived_top20_summary")]:
-            a, e = r[key]["amplitude"], r[key]["extent"]
-            lines.append(f"| {r['name']} | {r['audit']['computed_groups']} | {r['audit']['computed_images']} | {k} | "
-                         f"{a['mean_group_median_curve_exponent']:.6f} / {e['mean_group_median_curve_exponent']:.6f} | "
-                         f"{a['pooled_mode_median_exponent']:.6f} / {e['pooled_mode_median_exponent']:.6f} |")
-    lines += ["", "Reference rebuttal values: amplitude 1.59, extent 1.12. Full R², settings, image IDs, mode counts and arrays are in each run's directory.", "",
-              "The primary case is 45–55%, class-wise fixed RGB normalization, aligned single bbox, first 200 sorted annotation classes, at least 20 selected images/class, cap 300, K=100. The other cases reflect the existing UI's 40–60% default and global-normalization option; K=20 is derived from the same stored spectra because it is the original UI default. Sweeps remain amplitude 0.2–2.0 and extent 0.2–1.0.", ""]
-    for r in outcomes:
-        p = ROOT / "cache/train_runs" / r["key"]
-        lines.append(f"- [{r['name']}]({(p/'summary.json').as_posix()}) · [plot]({(p/'scaling.png').as_posix()})")
-    (ROOT.parent / "output/imagenet_train_condition_results.md").write_text("\n".join(lines), encoding="utf-8")
-    sc.write_json(ROOT / "cache/train_study_results.json", outcomes)
+    result = dict(name=name, key=key, config=config,
+                  mode_counts={c: int(v["f_alpha"].shape[1]) for c, v in results.items()})
+    sc.write_json(directory / "result.json", result)
+    return result
 
 
 def main():
@@ -371,23 +302,11 @@ def main():
             wait_for_download()
             extract_annotated_subset(cat)
             data = scan_train(cat)
-            outcomes = []
-            for case in STUDY:
-                config = {**sc.DEFAULTS, **{k: v for k, v in case.items() if k != "name"},
-                          "grouping": "classwise", "min_class_images": 20}
-                outcomes.append(compute_run(config, data, case["name"]))
-                write_report(outcomes)
-            status(status="ready_for_review", completed_runs=len(outcomes),
-                   report=str(ROOT.parent / "output/imagenet_train_condition_results.md"))
-            print("Predeclared train study finished. Results ready for scientific review.", flush=True)
+            print("Dataset preparation complete.", flush=True)
         finally:
             ctypes.windll.kernel32.SetThreadExecutionState(0x80000000)
 
 
 if __name__ == "__main__":
     sys.stdout.reconfigure(encoding="utf-8")
-    try:
-        main()
-    except Exception as exc:
-        status(status="failed", error=repr(exc))
-        raise
+    main()

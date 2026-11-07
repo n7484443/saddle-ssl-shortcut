@@ -1,6 +1,6 @@
 """Faint/Vivid optimized single-file training.
 
-Edit Config below for data_dir, output_dir and seed. Run: python train_faint_vivid.py
+Edit Config below for data_dir, output_dir and seed. Run: python train_bc.py
 Requires CUDA PyTorch, torchvision, numpy, Pillow and tqdm; original RGB48 data/manifest files.
 Constructor-default Conv/Linear initialization, followed by the existing six-batch scale calibration.
 Scientific settings: lambda0.028671875, LR1.6, scaling5e-8, warmup2000, steps30000, probe500.
@@ -24,7 +24,6 @@ from torch.nn import functional as F
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader, Dataset
 from torchvision.transforms import v2 as T
-from torchvision.models import resnet18
 from tqdm import tqdm
 
 
@@ -345,9 +344,6 @@ def linear_probe(model, head, initial_head, train, test, cfg):
 def main(cfg):
     if cfg.batch_size % 2 or cfg.steps <= 0 or cfg.probe_every <= 0:
         raise ValueError("Use an even batch size and positive steps/probe_every.")
-    actual = {"canonical_name":ROOT.name.rsplit("_seed",1)[0],"config":asdict(cfg),"baseline_source_sha256":"9d48b9039aff1658b0ebddfdd708973c3043953f0b6265e7b4d6ed4343b3ace5"}
-    (ROOT / "actual_settings.json").write_text(json.dumps(actual,indent=2),encoding="utf-8")
-    print("ACTUAL_SETTINGS " + json.dumps(actual),flush=True)
     torch.set_num_threads(4)
     set_seed(cfg.seed)
     train, train_noaug, test = make_loaders(cfg)
@@ -373,7 +369,6 @@ def main(cfg):
     calibration = initialize(model, x1_init, x2_init, cfg)
     top = calibration["raw_top"]
     scaling_top = calibration["scaling_top"]
-    (output / "initial_calibration.json").write_text(json.dumps(calibration, indent=2), encoding="utf-8")
     training_batches = [(x1_init, x2_init)] if cfg.fixed_batch else train
     if cfg.fixed_batch:
         torch.save({"x1": x1_init.cpu(), "x2": x2_init.cpu()}, output / "fixed_views.pt")
@@ -463,14 +458,12 @@ def main(cfg):
         finally:
             torch.save({"model": model.state_dict(), "optimizer": optimizer.state_dict(),
                         "step": step, "state": state}, output / "last.pt")
-            (output / "status.json").write_text(json.dumps({"state": state, "step": step}), encoding="utf-8")
 
 
 if __name__ == "__main__":
     config_path = ROOT / "launch_config.json"
     overrides = json.loads(config_path.read_text(encoding="utf-8")) if config_path.is_file() else {}
     main(Config(**overrides))
-
 
 
 

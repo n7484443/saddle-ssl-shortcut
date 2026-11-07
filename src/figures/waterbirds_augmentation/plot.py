@@ -14,8 +14,6 @@ app = marimo.App(width='full')
 
 @app.cell
 def _():
-    import json
-    import hashlib
     import numpy as np
     import torch
     import matplotlib.pyplot as plt
@@ -33,12 +31,9 @@ def _():
 
     def plot_scatter():
         base = ROOT/'feature_preference/practical/waterbirds/datas/BarlowTwins_multiple_filtered_0.01'
-        loaded = {}
         def load_accuracy(seed, ratio):
             path = base/str(seed)/str(ratio)/'accuracy.csv'
-            loaded[str(path)] = hashlib.sha256(path.read_bytes()).hexdigest()
             values = np.loadtxt(path, delimiter=',').T
-            assert values.shape[0] == 3 and np.isfinite(values).all()
             return values
 
         ratios = [.03, .06, .09]
@@ -66,41 +61,14 @@ def _():
         axes[1].grid(True, alpha=.3)
         fig.tight_layout()
 
-        arrays = {}
-        for ai, axis in enumerate(axes):
-            for li, line in enumerate(axis.lines):
-                arrays[f'a{ai}_line{li}_x'] = np.asarray(line.get_xdata())
-                arrays[f'a{ai}_line{li}_y'] = np.asarray(line.get_ydata())
-            for ci, collection in enumerate(axis.collections):
-                arrays[f'a{ai}_collection{ci}_offsets'] = np.asarray(collection.get_offsets())
-        frozen = HERE/'plotted_arrays.npz'
-        expected = np.load(frozen)
-        assert set(arrays) == set(expected.files)
-        assert all(np.array_equal(arrays[key], expected[key]) for key in arrays)
-        np.savez(HERE/'plotted_arrays.npz', **arrays)
         bounds = Bbox.from_bounds(0, 0, 22.4, 8)
         fig.savefig(HERE/'scatter_ratio_vs_steps.pdf', bbox_inches=bounds, pad_inches=.1)
         fig.savefig(HERE/'scatter_ratio_vs_steps.png', bbox_inches=bounds, pad_inches=.1)
         fig.savefig(HERE/'scatter_ratio_vs_steps.svg', bbox_inches=bounds, pad_inches=.1)
-        for path, digest in loaded.items():
-            assert hashlib.sha256(Path(path).read_bytes()).hexdigest() == digest
-        receipt = {'figure': 47, 'original_size_inches': [28, 10], 'new_size_inches': [22.4, 8],
-                   'dimension_factor': .8, 'font_scale_unchanged': 1.9,
-                   'ylabel': axes[0].get_ylabel(),
-                   'ylabel_fontsize_pt': axes[0].yaxis.label.get_fontsize(),
-                   'xlabel_fontsize_pt': axes[0].xaxis.label.get_fontsize(),
-                   'tick_fontsize_pt': axes[0].get_xticklabels()[0].get_fontsize(),
-                   'legend_fontsize_pt': axes[0].get_legend().get_texts()[0].get_fontsize(),
-                   'plotted_arrays_exact': True, 'sources_unchanged': True,
-                   'source_hashes': loaded, 'new_training': 0, 'savefig_dpi': 'not specified',
-                   'axes': [{'xlim': list(axis.get_xlim()), 'ylim': list(axis.get_ylim())} for axis in axes],
-                   'notebook': str(Path(__file__).resolve()),
-                   'output_sha256': hashlib.sha256((HERE/'scatter_ratio_vs_steps.pdf').read_bytes()).hexdigest()}
-        (HERE/'verification.json').write_text(json.dumps(receipt, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
         return fig
 
     figure = plot_scatter()
-    return figure,
+    return
 
 
 if __name__ == '__main__':

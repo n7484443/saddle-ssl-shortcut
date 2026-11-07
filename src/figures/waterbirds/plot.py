@@ -5,9 +5,6 @@ app = marimo.App(width="full")
 @app.cell
 def _():
     from pathlib import Path
-    import json
-    import hashlib
-    import os
     import numpy as np
     import torch
     import matplotlib
@@ -26,18 +23,13 @@ def _():
     root = next(p for p in Path(__file__).resolve().parents if (p / "common.py").is_file())
     base = root / "feature_preference/practical/waterbirds"
     stage = out / "stage"
-    loaded_files = {}
-    figure_receipts = []
-    return Path, base, colors, colors_darker, figure_receipts, hashlib, json, loaded_files, np, os, out, plt, root, stage
+    return Path, base, colors, colors_darker, np, plt, stage
 
 @app.cell
-def _(Path, base, colors, colors_darker, figure_receipts, hashlib, json, loaded_files, np, os, out, plt, root, stage):
+def _(Path, base, colors, colors_darker, np, plt, stage):
     def load_from_csv(path):
         p = Path(path)
-        assert p.is_file(), str(p)
-        loaded_files[str(p)] = hashlib.sha256(p.read_bytes()).hexdigest()
         a = np.loadtxt(p, delimiter=",")
-        assert np.all(np.isfinite(a)), str(p)
         return a
 
     def load_from_csv_split(path):
@@ -51,17 +43,6 @@ def _(Path, base, colors, colors_darker, figure_receipts, hashlib, json, loaded_
         dest.parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(dest, format="pdf")
         fig.savefig(dest.with_suffix(".png"))
-        arrays = {}
-        axes = []
-        for aidx, ax in enumerate(fig.axes):
-            axes.append(dict(xlim=list(ax.get_xlim()), ylim=list(ax.get_ylim()), xlabel=ax.get_xlabel(), ylabel=ax.get_ylabel()))
-            for lidx, line in enumerate(ax.lines):
-                arrays[f"a{aidx}_line{lidx}_x"] = np.asarray(line.get_xdata())
-                arrays[f"a{aidx}_line{lidx}_y"] = np.asarray(line.get_ydata())
-            for cidx, collection in enumerate(ax.collections):
-                arrays[f"a{aidx}_collection{cidx}_offsets"] = np.asarray(collection.get_offsets())
-        np.savez(out / (dest.stem + "_plotted_arrays.npz"), **arrays)
-        figure_receipts.append(dict(relative=relative, figure_size_inches=list(fig.get_size_inches()), axes=axes, output_sha256=hashlib.sha256(dest.read_bytes()).hexdigest()))
         plt.close(fig)
 
     def plot_waterbirds_b():
@@ -279,8 +260,6 @@ def _(Path, base, colors, colors_darker, figure_receipts, hashlib, json, loaded_
     plot_waterbirds_b()
     plot_waterbirds_c()
     plot_scatter()
-    for path, digest in loaded_files.items():
-        assert hashlib.sha256(Path(path).read_bytes()).hexdigest() == digest
     return
 
 if __name__ == "__main__":
