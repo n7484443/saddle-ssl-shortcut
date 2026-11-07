@@ -6,7 +6,7 @@ Figure	Plot	Experiment
 5	frequency_shortcut/theoretical/old/toy_freq_linear.ipynb	
 6	figures/backdoor/plot.py	frequency_shortcut/practical/mnist_backdoor/mnist_backdoor_generation.ipynb
 7	figures/cmnist/plot.py;feature_preference/theoretical/linear/barlowtwins_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
-8	feature_preference/theoretical/deep/balanced_renderer.ipynb;feature_preference/theoretical/mlp/barlowtwins_renderer.ipynb;feature_preference/theoretical/mlp/simclr_renderer.ipynb	figures/simclr_dln/plot.py
+8	feature_preference/theoretical/deep/balanced_renderer.ipynb;feature_preference/theoretical/mlp/barlowtwins_renderer.ipynb;feature_preference/theoretical/mlp/simclr_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
 9	figures/faint_vivid/plot.py;figures/faint_vivid/examples.py	faint_vivid/train_bc.py;faint_vivid/train_bc_sh.py
 10	feature_preference/theoretical/linear/barlowtwins_renderer.ipynb	feature_preference/theoretical/extent_bias.ipynb
 11	figures/amplitude_linear/plot.py	frequency_shortcut/theoretical/amplitude_bias.ipynb
