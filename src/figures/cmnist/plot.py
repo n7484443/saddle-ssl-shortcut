@@ -49,7 +49,6 @@ def _(here, np):
 @app.cell
 def _(np, original_colors, plt):
     def plot_cmnist(ratios, acc, step_list):
-        """Original NeurIPS cmnist_plot.ipynb cell 4; identical data and styling."""
         background_predictability = 70
         fig, axs = plt.subplots(1, 1, figsize=(13, 5.3))
         positions = []
@@ -71,7 +70,6 @@ def _(np, original_colors, plt):
         return fig
 
     def plot_variable_alpha(alpha_values, accuracy, steps):
-        """Original 20261105 no-.03 notebook function, preserving indices 1–3."""
         background_predictability = 70
         fig, ax = plt.subplots(1, 1, figsize=(13, 5.3))
         ran, stride = 1800, 2

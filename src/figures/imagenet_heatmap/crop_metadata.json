@@ -73,7 +73,7 @@
           }
         }
       ],
-      "output_path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\\ub17c\ubb38\\output\\rebuttal_agents\\ssl_backdoor\\object_ratio_crops_20261105\\high_ratio_0p8_crop.png",
+      "output_path": "high_ratio_0p8_crop.png",
       "output_size_wh": [
         224,
         224
@@ -90,7 +90,7 @@
       "role": "low",
       "class_wnid": "n02099712",
       "class_name": "Labrador retriever",
-      "selection_note": "No beagle validation image within 0.2 +/-0.01; another dog class was explicitly approved. Chosen for a clear single whole dog on grass, full bbox retention, ratio within 0.005. Existing high-ratio beagle crop is unchanged.",
+      "selection_note": "No beagle validation image within 0.2 +/-0.01; the low-ratio example uses another dog class. Chosen for a clear single whole dog on grass, full bbox retention, ratio within 0.005. Existing high-ratio beagle crop is unchanged.",
       "target_ratio": 0.2,
       "original_path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\\ub17c\ubb38\\Imagenet\\val\\ILSVRC2012_val_00016148.JPEG",
       "xml_path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\\ub17c\ubb38\\Imagenet\\bbox\\val\\ILSVRC2012_val_00016148.xml",
@@ -158,7 +158,7 @@
           }
         }
       ],
-      "output_path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\\ub17c\ubb38\\output\\rebuttal_agents\\ssl_backdoor\\object_ratio_crops_0p2_20261105\\low_ratio_0p2_crop.png",
+      "output_path": "low_ratio_0p2_crop.png",
       "output_size_wh": [
         224,
         224

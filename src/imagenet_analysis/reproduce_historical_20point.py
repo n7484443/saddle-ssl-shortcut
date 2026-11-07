@@ -1,4 +1,4 @@
-"""User-confirmed historical 20x20 sweep; isolated from existing 10x9 caches."""
+"""ImageNet amplitude and extent scaling on a 20x20 grid."""
 import hashlib
 import json
 import os
@@ -14,7 +14,6 @@ STATE = ROOT / 'historical_20point_status.json'
 
 def main():
     import torch
-    # Leave ample VRAM for the separately authorized MNIST run.
     if torch.cuda.is_available():
         torch.cuda.set_per_process_memory_fraction(.25)
     tp.STATUS = STATE

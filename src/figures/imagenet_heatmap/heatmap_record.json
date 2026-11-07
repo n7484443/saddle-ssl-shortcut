@@ -5,7 +5,6 @@
   "source_cell": 17,
   "original_pdf": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\latex\\fig\\dim\\practical\\imagenet\\spuriosity_orig.pdf",
   "original_pdf_sha256": "2d4064c375b0c415ea4f5aebc63dc96d07f73fbf4a940b1ff10e3a4dc24a4671",
-  "new_inference_directory": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\main\\reinference_20261105\\full_original12",
   "input_sha256": {
     "completion": "fa670f09b7222e0d8086e00ea4a77e304ad9c2a3775f72ba0e619a6a7b9736f4",
     "sample_manifest": "f4239e1c1391d59dd796147a7f542b7312522b65cc1490fcf9229bd11f15dc9a",
@@ -164,18 +163,16 @@
   },
   "exports": [
     {
-      "path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\staging\\dim\\practical\\imagenet\\spuriosity_orig.pdf",
+      "path": "spuriosity_orig.pdf",
       "sha256": "b4e377e3fe005fb65f6ac03c2765d67dd1514a04b8f358e46c9361cd21021642"
     },
     {
-      "path": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\staging\\dim\\practical\\imagenet\\spuriosity_orig.png",
+      "path": "spuriosity_orig.png",
       "sha256": "fd5d1c7ce25d5bfb0db2ab5c9332c6314dac0c4129d82fe061713b5cf3a34506"
     }
   ],
   "unicode_correction": {
-    "raw_pdf": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\raw_plot_pdf\\spuriosity_orig.pdf",
     "raw_sha256": "531ec5c616a6ac726fa49c561915dbcc71853c49e205b43353459ff6c5d71508",
-    "final_pdf": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\staging\\dim\\practical\\imagenet\\spuriosity_orig.pdf",
     "final_sha256": "b4e377e3fe005fb65f6ac03c2765d67dd1514a04b8f358e46c9361cd21021642",
     "changes": [
       {
@@ -187,9 +184,6 @@
     ],
     "purpose": "New replot pipeline Unicode correction, not graphics or font substitution",
     "font_program_or_glyph_modified": false,
-    "notebook": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\replot_spuriosity.py",
     "notebook_sha256": "a4bc616cb4a3bae94b8b4d1a20ef74257df73a428bf1d5c8ce11bed5926d7c50"
-  },
-  "verification": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\verification.json",
-  "pre_unicode_records_preserved": "C:\\Users\\n7484443\\Documents\\ChatGPT\\논문\\output\\rebuttal_agents\\figure_compare\\reinference_20261105\\plots\\raw_plot_pdf"
+  }
 }

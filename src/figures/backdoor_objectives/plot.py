@@ -90,9 +90,7 @@ def _(checkpoint, code_files, csv, json, methods, out_dir, raw_rows, reconciliat
         spurious_correlation='random trigger-label association (10% expected)',
         aggregation='Arithmetic mean and sample standard deviation (ddof=1) across all three seeds',
         missing='SimCLR intensity 0.1 absent for all seeds; no interpolation or imputation',
-        source_files=source_files, current_code_files=code_files, rebuttal_reconciliation=reconciliation,
-        code_provenance_limit='Current checked-in code/configs, not historical per-run snapshots. Config default conf.yaml absent; select method config explicitly for future reruns.',
-        scope='Saved CSV replot; not a new training run or a controlled algorithm-ranking benchmark')
+        source_files=source_files, current_code_files=code_files, rebuttal_reconciliation=reconciliation)
     (out_dir / 'provenance.json').write_text(json.dumps(provenance, indent=2), encoding='utf-8')
     for _name, _rows in [('source_rows.csv', raw_rows), ('summary.csv', summary),
                          ('rebuttal_reconciliation.csv', reconciliation)]:

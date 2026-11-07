@@ -30,9 +30,7 @@ def _():
 def _(mo):
     mo.md("""# Figure 11
     All alpha runs use CPU initialization followed by CUDA training.
-    Empirical curves use the original Figure 11 plotting cell.
     The blue dashed line is the alpha=1 spectral approximation, using projections of the actual initial CPU weights onto Gamma modes and the configured learning rate.
-    The completed CPU-initialized alpha=0.5 cache is reused. This notebook only reads cached results.
     """)
     return
 

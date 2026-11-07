@@ -34,7 +34,6 @@ def _():
 
 @app.cell
 def _(csv, hashlib, math, notebook_dir, re, statistics, workspace):
-    # This cell reads existing results only. It never imports training code.
     source_root = workspace / "frequency_shortcut/practical/mnist_backdoor_hadamard_grid"
     selected_rows = []
     source_signatures = []
@@ -99,7 +98,7 @@ def _(mo):
     relying on the trigger-label association. Values below 70% use the lowest color.
 
     Cell labels show mean accuracy (%) to one decimal place. The sample SD and full precision values
-    are provided separately below and in CSV files. No training runs on redraw.
+    are provided separately below and in CSV files.
     """)
     return
 

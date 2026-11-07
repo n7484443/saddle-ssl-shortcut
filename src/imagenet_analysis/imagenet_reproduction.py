@@ -164,7 +164,7 @@ def _(json, load_result, mo, refresh, root):
     _manifest = root / 'cache/historical_20point_result.json'
     _status_file = root / 'historical_20point_status.json'
     _status = json.loads(_status_file.read_text(encoding='utf-8')) if _status_file.exists() else {}
-    mo.stop(not _manifest.exists(), mo.md(f"Preparing the original 20-point spectral cache. **{_status.get('completed_groups', 0)}/{_status.get('total_groups', 188)} classes** · {_status.get('status', 'waiting')}\n\nThe amplitude coefficient was reproduced as **1.586016** in a separate cache check. Refresh above when processing finishes."))
+    mo.stop(not _manifest.exists(), mo.md(f"Preparing the spectral cache. **{_status.get('completed_groups', 0)}/{_status.get('total_groups', 188)} classes** · {_status.get('status', 'waiting')}\n\nRefresh to check progress."))
     result = load_result()
     return (result,)
 
