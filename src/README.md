@@ -18,9 +18,3 @@ Set data paths in the corresponding code or configuration. Saved CSV/NPZ results
 Some older theory figures no longer have their original `data.npy` files.
 Their experiment notebooks are included, with differences between current configurations and historical runs retained.
 Running a full experiment notebook may start training; use the cached plotting notebooks in `figures` to redraw available results.
-
-Figure 8(c) is linked to the ReLU MLP renderer; `figures/simclr_dln` contains the separate DLN comparison.
-The original training cache for that panel is unavailable, so the historical model is not independently confirmed.
-Figure 11 uses CPU-initialized results and a theoretical curve with corrected initial values.
-Figure 28 uses the selected five-feature result with scaling 3e-4 and learning rate 7.5e-8.
-Figure 42 shows the mean over five seeds. Its SD version adds bands only for depths with positive lower bounds at every slope.
